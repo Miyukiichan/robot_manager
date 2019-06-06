@@ -1,0 +1,27 @@
+command:
+  - name: "list"
+    exec: "/bin/ls"
+    param: "-l"
+  - name: "example"
+    exec: "/home/ADD_USER_HERE/catkin_ws/src/robot_manager/test/example"
+  - name: "echo"
+    exec: "/bin/echo"
+    param: "Hello World"
+  - name: "scrolling"
+    exec: "/home/ADD_USER_HERE/catkin_ws/src/robot_manager/test/scrolltest"
+    param: "50"
+  - name: "turtle"
+    exec: "/opt/ros/ADD_ROS_VERSION_HERE/bin/rosrun"
+    param: "turtlesim turtlesim_node"
+
+teleop:
+  topic: "turtle1/cmd_vel"
+  degradation: 0.01
+  turning_increment: 0.5
+  linear_increment: 2
+  refresh_timeout: 0.5
+  degradation_timeout: 0.05
+
+monitoring:
+  telemetry_topic: "/idris/telemetry"
+  safety_topic: "/idris/safety_status"

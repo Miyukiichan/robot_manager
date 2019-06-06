@@ -1,0 +1,84 @@
+\chapter{Background \& Objectives}
+
+\section{Background}
+
+The main objective of this work was to provide an application for operating robots that emphasised efficient use of resources as well as usability. The personal motivation for this project was to create something that can have a real benefit towards future research and will actually be used by others in their own work to make their lives easier/better. This is in addition to personal interest and experience in using low level, non-graphical applications that emphasise speed, extensibility and usability. This project provided an opportunity to understand how these sorts of systems work as well as the potential to make more of these types of systems.
+
+\subsection{Similar Systems}
+\label{similar}
+
+There are plentiful and various open source systems to assess in order to gain an understanding of non-graphical applications. One example that was assessed was {\fontfamily{pcr}\selectfont tmux}\cite{tmux}, a terminal multiplexer written in {\fontfamily{pcr}\selectfont C} using {\fontfamily{pcr}\selectfont ncurses}. This application runs in the terminal and can divide a terminal window into tiles running separate shell sessions. It can also display different "windows" which are similar to virtual workspaces and displays tabs at the bottom of the screen to represent these workspaces. This demonstrated the possibilities regarding the monitoring of program output and preserving it in tabs. The main problem with {\fontfamily{pcr}\selectfont tmux} as an alternative is that there is no menu to select applications to run from built in as each window is a shell prompt.
+
+Another example that was looked at was {\fontfamily{pcr}\selectfont ranger}\cite{ranger}, a terminal file manager written in {\fontfamily{pcr}\selectfont Python} using the {\fontfamily{pcr}\selectfont curses} module. {\fontfamily{pcr}\selectfont Ranger} shows a usage of menus that can be navigated using key bindings as well as mouse input. Similarly to {\fontfamily{pcr}\selectfont tmux}, {\fontfamily{pcr}\selectfont ranger} divides the terminal into sections and has "tabbed" functionality. However, unlike {\fontfamily{pcr}\selectfont tmux}, the sections show menus that display the current and parent directory as well as a preview of the currently selected file/directory. Also, the tabs are essentially different {\fontfamily{pcr}\selectfont ranger} sessions that help to multi-task within the same window. The general layout of {\fontfamily{pcr}\selectfont ranger} is very intuitive for this kind of application and also demonstrates further possibilities in terms of capturing process output and manipulating text.
+
+Finally, a system that is already being used for controlling these robots is a {\fontfamily{pcr}\selectfont qt} application made by Fred Labrosse. This application has dedicated tabs for stopping, teleoperation and status monitoring. This application was the basis of what this project is trying to recreate in the terminal aside from some extra features. As a result, the layout and functionality of the relevant sections of my application are very similar to his.
+
+\subsection{Reading and Preparation}
+\label{reading_and_prep}
+
+The initial preparation for this project involved considering the various ways to make a non-graphical application. Creating a custom UI library would have been infeasible so utilising existing tools was necessary. A very common tool for this is {\fontfamily{pcr}\selectfont ncurses}\cite{ncurses}, however, alternative tools were considered such as {\fontfamily{pcr}\selectfont termbox}\cite{termbox} and even {\fontfamily{pcr}\selectfont BASH}\cite{bash-tui}.
+
+The Curses Development Environment (CDK)\cite{cdk} was also tested in order to make the design less complex. This library adds {\fontfamily{pcr}\selectfont ncurses} widgets such as menus and buttons and can help to construct a TUI much quicker. Unfortunately, this did not work during initial testing and so was disregarded in favour of writing similar code from scratch. Additionally, there is no tab bar widget included meaning that some of the UI would have to be hand coded regardless.
+
+The primary reading for this area mostly consists of reading manual pages for standard Unix utilities. There are some exceptions such as this comprehensive guide on {\fontfamily{pcr}\selectfont ncurses}\cite{ncurses-howto}. Some prototypes were made in order to get a better understanding of the admittedly sparse documentation. Additionally, this work illustrated how {\fontfamily{pcr}\selectfont ncurses} works in terms of displaying text which informed later design decisions.
+
+As preparation for the report, a journal was kept and updated daily indicating progess and difficulties. This also acted as a way to organise new features to add based upon weekly meetings. This journal was not written as a blog and is not publicly available.
+
+\section{Analysis}
+%Taking into account the problem and what you learned from the background work, what was your analysis of the problem? How did your analysis help to decompose the problem into the main tasks that you would undertake? Were there alternative approaches? Why did you choose one approach compared to the alternatives? 
+
+%There should be a clear statement of the objectives of the work, which you will evaluate at the end of the work. 
+
+%In most cases, the agreed objectives or requirements will be the result of a compromise between what would ideally have been produced and what was determined to be possible in the time available. A discussion of the process of arriving at the final list is usually appropriate.
+
+The background work resulted in the selection of {\fontfamily{pcr}\selectfont ncurses} as the method of creating a non-graphical interface. This was decided as {\fontfamily{pcr}\selectfont ncurses} is a standard utility used everywhere and has more useful features than the more minimalist alternatives such as built in panes for splitting the terminal window. It is also the same tool used by the similar systems that were assessed. This will allow the application to be run in most terminal emulators as well as the {\fontfamily{pcr}\selectfont TTY}.
+
+Due to the low-level nature of {\fontfamily{pcr}\selectfont ncurses}, there was an understanding that not many UI features would be implemented. This is because more is required in order to achieve similar results in a more graphical API. This analysis showed that the final system had to be relatively simple so that other requirements could be feasibly met within the scope of the project.
+
+\subsection{User Stories}
+\label{user_stories}
+
+The requirements were identified as user stories after the background work was done and a better understanding of the project had been achieved. The stories that were identified are as follows:
+
+\begin{itemize}
+  \item The main menu is generated from a configuration file that the user can specify.
+  \item The user can run processes by selecting them from the menu. The process will appear in a tab and the output is displayed in the main window.
+  \item The user can switch tabs to view different processes being outputted.
+  \item Users can close the currently views process which kills it and removes it from the tab bar.
+  \item The user can scroll through menu items or output using a scrollbar. This behaviour is based on the size of the window and the limit of the buffer.
+  \item The robot can be controlled by the user using the keyboard or touch screen
+  \item There will be a part of the interface that will display robot status information
+\end{itemize}
+
+Each requirement was also associated with relevant classes as depicted in the class diagram in Appendix \ref{appendix:d}.
+
+\subsection{Project Components}
+
+The problem was broken up into three main systems, each of which represent a distinct stage in development as well as its own set of requirements. The ordering of these sections was based mainly on personal preference towards developing a user interface before the back-end. It was also foreseen that each of theses sections would take up a similarly significant partition of the code.
+
+\subsubsection{User Interface}
+
+The UI was seen as a substantial component of the system as it was made up of various interconnected sub-components. For most, projects, the user interface could be considered the simplest part, however, creating a comprehensive user interface is more involved with the tools that were used. The {\fontfamily{pcr}\selectfont ncurses} library definitely makes this process simpler, however, it is still low level and more tightly integrated into the back-end. The user interface was broken up further into windows that each serve a related yet distinct purpose. The main windows consist of the main output area, the process menu and the tab bar.
+
+\subsubsection{Process Management and Multitasking}
+
+This section concerns the ability to run pre-defined processes from a menu and view the output of each of them. To achieve this, the application needs to keep track of all open processes as well as be able to redirect and capture output. Additionally, it should be ensured that all processes are updated at equal intervals and that there is no performance impact on the user experience. There should also be functionality for closing a process tab that would also effectively kill the process.
+
+\subsubsection{Teleoperation and Monitoring}
+
+Teleoperation refers to the ability to control a robot using its own keyboard. This is arguably not teleoperation as it is not remote controlled, however, it can be used as such if the application itself is run on a separate machine and publishes messages to the topic the robot is listening to. Therefore, this feature will be known and referred to as teleoperation. This will involve creating a dedicated window layout with buttons that can send different velocity messages as well as being able to control the robot using the keyboard.
+
+The monitoring feature will have another dedicated window layout that displays status information of the robot. The topics to display will be inspired by the existing {\fontfamily{pcr}\selectfont qt} application that was assessed in Section \ref{similar}.
+
+\subsection{Security and Safety Issues}
+\label{safety}
+
+Due to the nature of this project, there are little to no security issues as there are already security measures put into place on the robot platforms being used. Also, the application does not deal with private information nor does it interface with networking protocols at all.
+
+However, there are certainly issues of safety to consider as this application will be directly and indirectly controlling large, heavy machinery. While this is not strictly related to security, measures still need to be taken during the project as well as considered during the design of the software. To combat these potential issues, all hardware testing is done under supervision and is accompanied by the existing teleoperation application. This is running on a laptop and can stop the robot immediately at any time in case anything goes wrong. Additionally, it is important to close programs opened in the application carefully to ensure that messages are not still being sent upon shutdown.
+
+\section{Process}
+
+The development process throughout the project can be described as a modified version of Scrum that is more appropriate for one individual rather than a team. This adaptation removes the idea of roles and instead allows for all work, planning and assessment to fall to a single developer as well as the client where necessary. What remains is an iterative development approach with an emphasis on rapid prototyping and integration as well as quick response to a change in the client's requirements. The justification for this approach is due to inexperience with the chosen technologies as well as the fact that the requirements were constantly subject to change.
+    
+Each sprint lasted for one week, at the end of which was a meeting with the project supervisor/client. This meeting would comprise of reporting progress, discussing issues and new features as well as planning the objectives for the following sprint. The start of a sprint would include either an analysis of a new feature to be completed or prioritising the most urgent/important items in the backlog. The amount of features to be completed in each sprint depends on individual understanding of personal velocity. If all designated features were finished before the end of the sprint, the next item on the backlog would be addressed.

@@ -1,0 +1,9 @@
+\thispagestyle{empty}
+
+%TC:ignore
+
+\section*{\centering Abstract}
+
+The main goal of this project was to solve various problems associated with operating the large robots in the department. These robots have screens attached to them that display a non-graphical environment running Linux and can be controlled using mounted keyboards. The most notable problem with this is that the output of only one process can be monitored in a single {\fontfamily{pcr}\selectfont TTY}, meaning that it was necessary to log in to separate {\fontfamily{pcr}\selectfont TTY} instances. Additionally, using an entirely terminal-based interface is inconvienient due to the necessity to type every command. To streamline this process, it seemed appropriate to create a "tabbed" interface that allows users to run commands from a list as well as switch between different processes using a tab bar. This can run any executables including {\fontfamily{pcr}\selectfont ROS} nodes that are defined in a configuration file beforehand. In addition to this, it was also decided to include a method for teleoperation within the application as well as a configurable way to display {\fontfamily{pcr}\selectfont ROS} topics in a menu. The main outcome of this work is a form of convienience and flexibility for anyone performing experiments using the robots and provides a form of redundancy in the event that a laptop connected to the robot is unavailable/infeasable.
+
+%TC:endignore

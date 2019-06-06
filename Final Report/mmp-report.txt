@@ -1,0 +1,2561 @@
+Customisable non-graphical interface to
+start/stop activities on mobile robots
+CS39440 Major Project Report
+
+Author: Sam Matthews (sam82@aber.ac.uk)
+Supervisor: Dr. Frédéric Labrosse (ffl@aber.ac.uk)
+18th March 2019
+Version: 1.0 (Draft)
+
+This report was submitted as partial fulfilment of a BSc degree in Artificial Intelligence
+And Robotics (GH76)
+
+Department of Computer Science
+Aberystwyth University
+Aberystwyth
+Ceredigion
+SY23 3DB
+Wales, U.K.
+
+Declaration of originality
+I confirm that:
+• This submission is my own work, except where clearly indicated.
+• I understand that there are severe penalties for Unacceptable Academic Practice,
+which can lead to loss of marks or even the withholding of a degree.
+• I have read the regulations on Unacceptable Academic Practice from the University’s
+Academic Registry (AR) and the relevant sections of the current Student Handbook
+of the Department of Computer Science.
+• In submitting this work I understand and agree to abide by the University’s regulations governing these issues.
+
+Name Sam Matthews
+
+Date 18th March 2019
+
+Consent to share this work
+By including my name below, I hereby agree to this project’s report and technical work
+being made available to other students and academic staff of the Aberystwyth Computer
+Science Department.
+
+Name ............................................................
+
+Date ............................................................
+
+Acknowledgements
+I would like to thank my supervisor Fred Labrosse for his support throughout the entire
+project.
+I would also like to thank my parents for listening to me as I descend into madness.
+
+Abstract
+The main goal of this project was to solve various problems associated with operating
+the large robots in the department. These robots have screens attached to them that
+display a non-graphical environment running Linux and can be controlled using mounted
+keyboards. The most notable problem with this is that the output of only one process
+can be monitored in a single tty, meaning that it was necessary to log in to separate tty
+instances. Additionally, using an entirely terminal-based interface is inconvienient due to
+the necessity to type every command. To streamline this process, it seemed appropriate to
+create a tabbed interface that allows users to run commands from a list as well as switch
+between different processes using a ”tabbed” interface. This can run any executables
+including ROS nodes that are defined in a configuration file beforehand. In addition to
+this, it was also decided to include a method for teleoperation within the application as
+well as a configurable way to display ROS topics in a menu. The main outcome of this
+work is a form of convienience and flexibility for anyone performing experiments using the
+robots and provides a form of redundancy in the event that a labtop connected to the robot
+is unavailable/infeasable.
+
+Contents
+1 Background & Objectives
+1.1 Background . . . . . . . . . . . .
+1.1.1 Similar Systems . . . . . .
+1.1.2 Reading and Preparation .
+1.2 Analysis . . . . . . . . . . . . . .
+1.2.1 Project Components . . .
+1.2.2 Security and Safety Issues
+1.3 Process . . . . . . . . . . . . . .
+
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+
+1
+1
+1
+2
+2
+2
+3
+4
+
+2 Overall Final Design
+2.1 Overall Architecture . .
+2.2 Implementation Tools .
+2.3 Some detailed design .
+2.3.1 Even more detail
+2.4 User Interface . . . . . .
+2.5 Other relevant sections
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+5
+5
+6
+6
+6
+6
+7
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+3 Implementation and Design Changes
+3.1 User Interface . . . . . . . . . . . . . . . . . . .
+3.1.1 Main Output Window . . . . . . . . . . .
+3.1.2 Side Bar Menu . . . . . . . . . . . . . .
+3.1.3 Tab Bar . . . . . . . . . . . . . . . . . .
+3.1.4 Teleoperation Tab . . . . . . . . . . . . .
+3.1.5 Monitoring Tab . . . . . . . . . . . . . .
+3.2 Process Management . . . . . . . . . . . . . .
+3.2.1 Starting Processes . . . . . . . . . . . .
+3.2.2 Emulating Teletype Interfaces . . . . . .
+3.2.3 Capturing Process Output . . . . . . . .
+3.2.4 Killing Processes . . . . . . . . . . . . .
+3.3 Teleoperation . . . . . . . . . . . . . . . . . . .
+3.4 Monitoring . . . . . . . . . . . . . . . . . . . . .
+3.5 Issues . . . . . . . . . . . . . . . . . . . . . . .
+3.5.1 Capturing Process Output Using popen .
+3.5.2 Killing Child Processes . . . . . . . . . .
+3.5.3 Publishing Messages Too Quickly . . . .
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+8
+8
+9
+10
+10
+10
+11
+11
+11
+12
+12
+12
+13
+13
+13
+13
+14
+14
+
+4 Testing
+4.1 Overall Approach to Testing
+4.2 System Testing . . . . . . .
+4.3 Hardware Testing . . . . . .
+4.4 User Interface Testing . . .
+4.5 Stress Testing . . . . . . . .
+4.6 User Testing . . . . . . . .
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+15
+15
+15
+15
+15
+16
+16
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+5 Evaluation
+17
+5.1 Evaluation of Agile Approach . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+i
+
+5.2
+5.3
+5.4
+5.5
+5.6
+5.7
+5.8
+5.9
+
+Identifying the Requirements . . . . . .
+Design Decisions . . . . . . . . . . . . .
+Appropriateness of Tools Used . . . . .
+Relevance to Degree Scheme . . . . . .
+Application and Impact . . . . . . . . . .
+Time Management . . . . . . . . . . . .
+Evaluation of Additional Project Goals .
+What Could Have Been Done Differently
+
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+
+17
+17
+17
+17
+18
+18
+18
+18
+
+Annotated Bibliography
+
+19
+
+Appendices
+
+21
+
+A Third-Party Code and Libraries
+
+23
+
+B Ethics Submission
+
+24
+
+C Code Examples
+3.1 Altering Child IO Signals . .
+3.2 Example Configuration File
+3.3 Test Programs . . . . . . .
+3.3.1 Example Program 01
+3.3.2 Example Program 02
+3.3.3 Example Program 03
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+D Diagrams
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+28
+28
+28
+29
+29
+29
+30
+31
+
+ii
+
+List of Figures
+D.1 UML class diagram of the final system . . . . . . . . . . . . . . . . . . . . . 31
+
+iii
+
+List of Tables
+
+iv
+
+Chapter 1
+
+Background & Objectives
+
+Chapter 1
+
+Background & Objectives
+1.1
+
+Background
+
+The main objective of this work was to provide an application for operating robots that
+emphasised efficient use of resources as well as usability. The personal motivation for
+this project was to create something that can have a real benefit towards future research
+and will actually be used by others in their own work to make their lives easier/better.
+This is in addition to personal interest and experience in using low level, non-graphical
+applications that emphasise speed, extensibility and usability. This project provided an
+opportunity to understand how these sorts of systems work as well as the potential to
+make more of these types of systems.
+
+1.1.1
+
+Similar Systems
+
+There are plentiful and various open source systems to assess in order to gain an understanding of non-graphical applications. One example that was assessed was tmux [1], a
+terminal multiplexer written in C using ncurses. This application runs in the terminal and
+can divide a terminal window into tiles running separate shell sessions. It can also display different ”windows” which are similar to virtual workspaces and displays tabs at the
+bottom of the screen to represent these workspaces. This demonstrated the possibilities
+regarding the monitoring of program output and preserving it in tabs. The main problem
+with tmux as an alternative is that there is no menu to select applications to run from built
+in as each window is a shell prompt.
+Another example that was looked at was ranger [2], a terminal file manager written in
+python using the curses module. Ranger shows a usage of menus that can be navigated
+using key bindings as well as mouse input. Similarly to tmux, ranger divides the terminal
+into sections and has ”tabbed” functionality. However, unlike tmux, the sections show
+menus that display the current and parent directory as well as a preview of the currently
+selected file/directory. Also, the tabs are essentially different ranger sessions that help
+to multi-task within the same window. The general layout of ranger is very intuitive for
+this kind of application and also demonstrates further possibilities in terms of capturing
+1 of 31
+
+Chapter 1
+
+Background & Objectives
+
+process output and manipulating text.
+Finally, a system that is already being used for controlling these robots is a qt application
+made by Fred Labrosse. This application has dedicated tabs for stopping, teleoperation
+and status monitoring. This application was the basis of what this project is trying to recreate in the terminal aside from some extra features. As a result, the layout and functionality
+of the relevant sections of my application are very similar to his.
+
+1.1.2
+
+Reading and Preparation
+
+The initial preparation for this project involved considering the various ways to make a
+non-graphical application. Creating a custom UI library would have been infeasible so
+utilising existing tools was necessary. A very common tool for this is ncurses [3], however,
+alternative tools were considered such as termbox [4] and even BASH [5].
+The Curses Development Environment (CDK) [6] was also tested in order to make the
+design less complex. This library adds ncurses widgets such as menus and buttons and
+can help to construct a TUI much quicker. Unfortunately, this did not work during initial
+testing and so was disregarded in favour of writing similar code from scratch. Additionally,
+there is no tab bar widget included meaning that some of the UI would have to be hand
+coded regardless.
+The primary reading for this area mostly consists of reading manual pages for standard
+UNIX utilities. There are some exceptions such as this comprehensive guide on ncurses
+[7]. Some prototypes were made in order to get a better understanding of the admittedly
+sparse documentation. Additionally, this work illustrated how ncurses works in terms of
+displaying text which informed later design decisions.
+As preparation for the report, a journal was kept and updated daily indicating progess and
+difficulties. This also acted as a way to organise new features to add based upon weekly
+meetings. This journal was not written as a blog and is not publicly available.
+
+1.2
+
+Analysis
+
+The background work resulted in the selection of ncurses as the method of creating a nongraphical interface. This was decided as ncurses is a standard utility used everywhere
+and has more useful features than the more minimalist alternatives such as built in panes
+for splitting the terminal window. It is also the same tool used by the similar systems that
+were assessed. This will allow the application to be run in most terminal emulators as well
+as the tty.
+
+1.2.1
+
+Project Components
+
+The problem was broken up into three main systems, each of which represent a distinct
+stage in development as well as its own set of requirements. The ordering of these sec2 of 31
+
+Chapter 1
+
+Background & Objectives
+
+tions was based mainly on personal preference towards developing a user interface before
+the back-end. It was also foreseen that each of theses sections would take up a similarly
+significant partition of the code.
+
+1.2.1.1
+
+User Interface
+
+The UI was seen as a substantial component of the system as it was made up of various
+interconnected sub-components. For most, projects, the user interface could be considered the simplest part, however, creating a comprehensive user interface is more involved
+with the tools that were used. The ncurses library definitely makes this process simpler,
+however, it is still low level and more tightly integrated into the back-end. The user interface was broken up further into windows that each serve a related yet distinct purpose.
+The main windows consist of the main output area, the process menu and the tab bar.
+
+1.2.1.2
+
+Process Management and Multitasking
+
+This section concerns the ability to run pre-defined processes from a menu and view the
+output of each of them. To achieve this, the application needs to keep track of all open
+processes as well as be able to redirect and capture output. Additionally, it should be
+ensured that all processes are updated at equal intervals and that there is no performance
+impact on the user experience. There should also be functionality for closing a process
+tab that would also effectively kill the process.
+
+1.2.1.3
+
+Teleoperation and Monitoring
+
+Teleoperation refers to the ability to control a robot using its own keyboard. This is arguably
+not teleoperation as it is not remote controlled, however, it can be used as such if the
+application itself is run on a separate machine and publishes messages to the topic the
+robot is listening to. Therefore, this feature will be known and referred to as teleoperation.
+This will involve creating a dedicated window layout with buttons that can send different
+velocity messages as well as being able to control the robot using the keyboard.
+The monitoring feature will have another dedicated window layout that displays status
+information of the robot. The topics to display will be inspired by the existing qt application
+that was assessed in Section 1.1.1.
+
+1.2.2
+
+Security and Safety Issues
+
+Due to the nature of this project, there are little to no security issues as there are already
+security measures put into place on the robot platforms being used. Also, the application
+does not deal with private information nor does it interface with networking protocols at
+all.
+
+3 of 31
+
+Chapter 1
+
+Background & Objectives
+
+However, there are certainly issues of safety to consider as this application will be directly
+and indirectly controlling large, heavy machinery. While this is not strictly related to security, measures still need to be taken during the project as well as considered during the
+design of the software. To combat these potential issues, all hardware testing is done
+under supervision and is accompanied by the existing teleoperation application. This is
+running on a laptop and can stop the robot immediately at any time in case anything goes
+wrong. Additionally, it is important to close programs opened in the application carefully
+to ensure that messages are not still being sent upon shutdown.
+
+1.3
+
+Process
+
+The development process throughout the project can be described as a modified version
+of Scrum that is more appropriate for one individual rather than a team. This adaptation
+removes the idea of roles and instead allows for all work, planning and assessment to
+fall to a single developer as well as the client where necessary. What remains is an
+iterative development approach with an emphasis on rapid prototyping and integration as
+well as quick response to a change in the client’s requirements. The justification for this
+approach is due to inexperience with the chosen technologies as well as the fact that the
+requirements were constantly subject to change.
+Each sprint lasted for one week, at the end of which was a meeting with the project supervisor/client. This meeting would comprise of reporting progress, discussing issues and
+new features as well as planning the objectives for the following sprint. The start of a
+sprint would include either an analysis of a new feature to be completed or prioritising the
+most urgent/important items in the backlog. The amount of features to be completed in
+each sprint depends on individual understanding of personal velocity. If all designated
+features were finished before the end of the sprint, the next item on the backlog would be
+addressed.
+
+4 of 31
+
+Chapter 2
+
+Overall Final Design
+
+Chapter 2
+
+Overall Final Design
+• Design decision to not account for change in terminal window size due to application
+mainly running in tty during use
+• Scrollbar initially its own class but quickly changed to be part of the window as it
+needed so many of its attributes and could just be done in the printing function
+without constantly passing data between objects.
+The evolution of the design of the application is inherent to the agile methodology adopted.
+The design outlined in this section will illustrate the final design as well as talk about how
+each design element has evolved when appropriate. Some of the design has been consistent from the beginning of the project such as the general user interface design. However,
+other parts needed to evolve due to a change in the understanding of the requirements
+and the technical limitations of the technologies used.
+Much of the initial design consisted of user stories arranged on a story board alongside
+basic class descriptions. These items were arranged on the story board in such a way
+that the classes would cluster around relevant stories and create spatial CRC ”cards”.
+
+2.1
+
+Overall Architecture
+
+This project uses an object oriented approach to development which makes appropriate
+use of inheritance, particularly where the user interface code is concerned. The class
+diagram illustrating this design is included in Appendix D.
+Each section of the screen is represented by a Window object that defines its co-ordinates
+as well as dictates the behaviour of printing.
+
+5 of 31
+
+Chapter 2
+
+2.2
+
+Overall Final Design
+
+Implementation Tools
+
+The application is written in C++11 using a combination of C and C++ libraries. The choice
+to use C++ is primarily based on the need to program using ROS [8]. ROS wrappers only
+exist for C++, Python and LISP, making these the only choices for languages to use. It was
+decided to use C++ over the other ROS supported alternatives simply due to increased
+runtime speed as well as existing knowledge and experience in using C++. This decision
+is one that evolved during development as the initial application was written in C. This
+was due to the mistaken understanding that all interactions with ROS would have been
+through using scripts or executables. However, due to a change in the understanding of
+the requirements regarding how ROS information should be displayed, it was made clear
+that using C would have been less than ideal.
+In terms of development tools and environments used, neovim [9] was used as a text
+editor as opposed to using an IDE. This is mainly due to past experience using neovim as
+well as the enhanced editting and runtime speed a minimal modal editor can afford. All
+work was backed up daily to a GitLab repository as well as automatically synchronised
+between two computers using Syncthing [10].
+
+2.3
+2.3.1
+
+2.4
+
+Some detailed design
+Even more detail
+
+User Interface
+
+Various elements of the design of the user interface were specified before the start of the
+project by the client. Such elements include the inclusion of a tab bar showing all running
+processes and an area to monitor process output. An intuitive decision was to have the
+tab bar placed at the top of the screen and have the vast majority of the screen real estate
+taken up by the main output section. This is in accordance with the standard layout of
+tabbed graphical applications but simply adapted to a text interface.
+The design of the user interface was loosely inspired by existing applications such as
+ranger [2]. The goal of the design was to fit as much as possible onto one static screen as
+possible. This is mostly due to the constraints of working in an entirely text based environment as well as the usage of small display devices. As a result, the design is deliberately
+simple where each section is divided up into rectangles and remains consistent for the
+duration of the application runtime.
+Additionally, the consideration of ease of use had an impact on certain design choices.
+For instance, the area displaying available processes to run was integrated as a side bar
+as opposed to its own dedicated screen. This saves time if the user wants to run several
+processes in rapid succession without having to repeatedly switch back to the main menu.
+The design of the interface also accounts for touch input as well as keyboard control.
+This requirement was designed for with the inclusion of extra buttons on screen such as
+6 of 31
+
+Chapter 2
+
+Overall Final Design
+
+a button for closing tabs, scrollbars for viewing output history as well as onscreen buttons
+for teleoperation.
+
+2.5
+
+Other relevant sections
+
+7 of 31
+
+Chapter 3
+
+Implementation and Design Changes
+
+Chapter 3
+
+Implementation and Design
+Changes
+• Issue with teleoperation not stopping when switching tabs like it was supposed to.
+Also if it did stop after switching tabs it would reset to the previous speed when going
+back to the teleop tab
+• Tab bar does not scroll properly so new tabs will eventually be displayed outside the
+window (they will be invisible)
+• subsequent result of using pty’s was that output stalling when closing tab to the left
+of another tab fixed itself as if by magic
+• Touch input uses mouse input combined with gpm
+• Scroll bars are currently missing also there is no touch control for scrolling
+• If get monitoring working talk about how it is hard coded and not variable based on
+config file as was desired
+• Config file name originally hard coded but now use getenv to find home directory to
+make it easier to find the file on other user accounts or other computers
+As an agile project, there was little upfront design and a heavy focus on iterative development. As a result, this chapter will not only talk about what was implemented and the
+issues faced but also describe how the design was affected by these issues. This will
+provide an understanding of how the final design detailed in Chapter 2 came to be as well
+as explain the relationship between it and the initial design decisions noted in the same
+chapter.
+
+3.1
+
+User Interface
+
+The interface is primarily made up of a series of windows that divide the terminal window
+into tiled rectangles. This is particularly easy to achieve using ncurses as it has functionality for this built in. The major advantage of using windows is that when manipulating
+8 of 31
+
+Chapter 3
+
+Implementation and Design Changes
+
+the content within them, all coordinates are relative to the origin (top-left corner) of the
+window. This made developing printing functions seamless as there is no need to keep
+referring to absolute positions and instead assume that everything starts from zero.
+One interesting aspect of the window implementation to note is the calculation of the window sizes. Every window dimension is based upon the height of the tab bar and the width
+of the side menu. As a result of this there is very little hard coding of values which makes
+it easier to adjust the sizing of the entire interface.
+One challenge, or more accurately annoyance, when using ncurses is that the printing
+function requires the passing of the vertical co-ordinate value before the horizontal. This
+is counter to common convention and was occasionally cause for small mistakes.
+
+3.1.1
+
+Main Output Window
+
+The main window is treated as the basic foundations of the other windows. It is mostly
+used to display a list of lines as well as have the ability to scroll through this output. The
+other window types inherit from this window and share much of its functionality.
+The fundamental functionality of each window in the application is to print line by line.
+There is no existing function for this in ncurses so it was necessary to create a way to do
+this. The function implemented takes a vector of strings where each string is a line to be
+printed. It iterates over this starting from the size of the window subtracted from the size
+of the list and simply prints each string until the window is full or the list runs out.
+In order to account for scrolling through output, the iteration actually starts from the current
+scroll position. When the list is updated, the scroll position increments unless the user is
+currently scrolling. This is referred to as scrolling mode which prevents the scroll position
+from changing so that the output can be viewed conveniently.
+The initial design for the printing mechanism utilised the idea of calculating an offset based
+upon the difference between the height of the window and the length of the output buffer
+of the currently selected process. This offset was calculated in real time and would then
+be added on to an incrementing index starting at 0 to select the appropriate line to be
+displayed at the top of the window. Additionally, the scrolling/printing was performed in
+relation to the bottom of the screen rather than the top. This made the implementation
+more confusing and also created issues when it came to scrolling multiple lines at a time.
+Notably, it was impossible to scroll to the top of the buffer without under/over shooting the
+first line. This was primarily due to the unnecessary complexity of the function leading to
+mistakes.
+The solution to this was to simplify the printing method to start at the offset itself as opposed
+to trying to calculate everything at once in the same function. This ended up making the
+printing and scrolling far simpler and more reliable than the initial implementation.
+
+9 of 31
+
+Chapter 3
+
+3.1.2
+
+Implementation and Design Changes
+
+Side Bar Menu
+
+Due to the low level of the ncurses library, the idea of what a menu is had to be abstracted
+and implemented from scratch. The idea is that the currently selected item is based on
+a current index and that the line corresponding to this index will be highlighted. When a
+menu item is chosen the index dictates which process to run from the stored list. The way
+this works in practice is to modify the Window printing function to invert the colours when
+the line number being printed matches the selection index. This creates the illusion of
+having ”selected” an item in the list.
+In order to move this selection index, keyboard control was implemented as a simple
+switch statement in the main program loop. The keys ”up” and ”down”, for instance would
+decrement and increment the index respectively, thus changing which line is highlighted.
+Mouse input was added later in development but was a simple addition to the existing
+switch statement. A mouse event is treated as a keyboard event with some extra metadata such as screen co-ordinates. This then expanded into checking which window the
+mouse pressed and subsequently retrieving the correct menu/button index. This was
+based on whether or not the vertical co-ordinates of the mouse input was less than or
+equal to the size of the list. Unfortunately, this design resulted in some cases having to
+be repeated for both key and mouse input rather that effectively reuse the code.
+There are some issues regarding mouse input, namely that if the application is restarted
+a few times, trying to use the mouse can lead to it crashing. Also, after one restart, using
+the mouse causes all process output to be upper case. The reasons for this behaviour is
+presently unknown.
+
+3.1.3
+
+Tab Bar
+
+The tab bar inherits from the Menu class and performs in much the same way aside from
+some important differences. One of which is that the contents of the tab bar are dynamic
+as processes are added/removed during runtime. This results in the addition of the ability
+to add a tab (open a process) and close a tab (kill a process). There is not much to discuss
+for these elements aside from having to also update the list of currently open processes
+stored as as a vector. However, much of the process related features of the tab bar a
+explained in Section 3.2.
+
+3.1.4
+
+Teleoperation Tab
+
+This addition to the user interface came about during the development of the teleoperation
+feature described in Section 3.3. This window is rather distinct from the other as it does not
+deal with lists of lines. Alternatively, it houses buttons that are clickable and are arranged
+as depicted below.
+The buttons themselves are sub-windows of the main output window. The reason for this
+is that it was easier to draw a box around them. Also, this makes it easier to determine if
+a mouse click was registered inside a button due to the ncurses function ”wmouse trafo”.
+10 of 31
+
+Chapter 3
+
+Implementation and Design Changes
+
+The function that defines the positions of each button is unfortunately long and overly
+complex. It also uses hard coded values for the button dimensions and the button labels.
+However, it effectively sizes the buttons appropriately and ensures that the label is kept in
+the middle of the button by forcing the vertical size to be an odd number.
+In order to integrate the teleoperation tab into the tab bar, it was decided to keep it as the
+first index at all. The menu printing function was modified to accept an extra vector of
+strings to prefix the start of the list. Additionally, it was hard coded that if the bar index
+was at 1, this indicated that teleoperation mode was active.
+The user interface responds to teleoperation mode by displaying the teleoperation tab in
+the main window. Additionally, this allows the user to control the robot using the keyboard
+or on-screen buttons.
+
+3.1.5
+
+Monitoring Tab
+
+N/A
+
+3.2
+3.2.1
+
+Process Management
+Starting Processes
+
+- fork, execv
+The application reads the YAML configuration file during its initialisation. Part of this file
+defines the commands to be made available in the menu and run within the program. The
+file is parsed using yaml-cpp [11] and each process is constructed with the data extracted
+from there. The file was originally using a custom format until it was decided that this would
+be too complicated and unnecessary. Also YAML is used heavily in ROS so using it for
+this application seemed more suitable than alternatives for the sake of consistency. Additionally, yaml-cpp is the actual library used by ROS to interpret YAML files. This means
+that on some systems, there is no need to install it as a separate dependancy (although
+this was not consistently true). It was decided to separate the program executable option
+from the parameter option in the file. This makes parsing easier due to the increased
+ability to deal with commands that do not use parameters.
+In order to start a process, the strings in the YAML file need to be split in order to extract
+the executable name and the separate parameters to be passed to execv [12]. This was
+done using the boost [13] split algorithm, splitting by spaces or ”/” characters where appropriate. This was planned to be done manually using strtok, however, due to complications,
+it was decided to make use of pre-made libraries. This made the relevant sections of code
+simpler and ultimately saved development time. There were also some initial problems regarding accepting zero or multiple parameters. However, these were alleviated by making
+use of both yaml-cpp and the boost split algorithm and is now functioning properly.
+
+11 of 31
+
+Chapter 3
+
+3.2.2
+
+Implementation and Design Changes
+
+Emulating Teletype Interfaces
+
+An unforeseen issue surfaced while testing the application using ROS commands such
+as roscore and roslaunch. This issue was primarily to do with how ROS utilities (as well
+as other programs) display and manipulate data in the terminal. In order to display text in
+colour without explicitly using Ascii escape codes, as well as accept standard input as raw
+input, these programs change the termios attributes of their respective terminal devices.
+If a program does this to suit its own needs, the parent application does not accept user
+input as the ncurses settings were being overridden by the children.
+The solution to this problem was to essentially emulate a Teletype interface (TTY) using
+pseudo-terminals (PTY’s) [14] for each child process so that they act as if they are running
+in a regular terminal environment. Additionally, it was necessary to disable standard input
+for each PTY so that the parent can take over. Much of the understanding and the actual
+code for this came from a project called tty8 [15], an example of which can be found in
+Appendix C.
+The example shown illustrates how standard input as well as blocking were disabled as
+the process was being started. As well as this, during the creation of the PTY, the original
+signal mask was passed as a parameter in order to preserve the terminal attributes of the
+parent. This resulted in a positive outcome in which ROS processes were not interrupting
+the activity of the parent, allowing for effective multitasking.
+A subsequent benefit of this problem being solved was that the colour data that ROS
+outputs was being captured in its raw form where previously it was being omitted from the
+text. This creates the opportunity to parse and convert text into its intended colour in the
+main output screen using ncurses colour pairs during the printing stage. Unfortunately,
+due to time constraints this was not implemented and instead the codes are deleted using
+a regular expression. This makes use of the regex [16] C++ standard library.
+
+3.2.3
+
+Capturing Process Output
+
+- Before pty’s output was being redirected using pipes and redirecting/disabling file descriptors using dup2 - created some issues due to file descriptors not set correctly
+- After pty’s but before knowing about fdopen, tried to implement my own version of fgets.
+Did not work but found out how to use fdopen and fgets so all was well
+- fdopen pty file decriptor + fgets til width of window or newline = text wrapping
+- Tab bar iterates through all open processes and refreshes the buffer
+- Buffer is then sent to the main window and printed
+
+3.2.4
+
+Killing Processes
+
+- Kill with sigint
+
+12 of 31
+
+Chapter 3
+
+Implementation and Design Changes
+
+- Death queue + check death + reap dead = safe termination
+
+3.3
+
+Teleoperation
+
+- Due to this feature roscore must be running in order to run the application so can’t run it
+from within the application itself
+- Sends geometry twist messages every X seconds to Y topic in config file
+- Turning amount degrades by X incrementally after Y seconds to help reset turning - initial
+issues with degrading too fast without Y seconds resulting in no turning
+- Stopping sends 0 velocity message 10 times - used to only be one which cause some
+issues
+- Messages only sent if in teleop tab so other nodes won’t get interupted all the time
+
+3.4
+
+Monitoring
+
+N/A
+
+3.5
+3.5.1
+
+Issues
+Capturing Process Output Using popen
+
+The popen [17] function from the stdio C library performs much of the back-end for process
+management and was initially used in order to make the code simpler and take advantage
+of standard libraries. It takes an executable as an argument, forks and executes it, and
+finally returns a file stream for capturing standard output for the respective process.
+However, due to a misunderstanding as to how popen works, it was found to be unhelpful
+for certain features of the application. The reason for this is that popen does not return
+the process ID of the forked process which means that it is impossible to reliably kill it.
+The only way to use this would be to kill processes with pkill [18] which kills all processes
+matching a regular expression which is not ideal. This meant that it was necessary to reimplement the functionality of popen in order to gain access to both the standard output
+and the PID of each process. This served to delay development as well as make the code
+more complicated than initially predicted. However, this re-implementation meant that
+solving a later issue 3.2.2 was easier due to more granular control over the functionality.
+
+13 of 31
+
+Chapter 3
+
+3.5.2
+
+Implementation and Design Changes
+
+Killing Child Processes
+
+An integral and simultaneously temperamental aspect of this project is to be able to kill
+processes easily. The way this was being done initially was to send a kill signal and
+then wait for the given process to terminate. The advantage of this is that the program
+can take note of the death of a process and prevent it from remaining in a zombie state.
+However, a particular problem with ROS applications is that they need to shut down safely
+and thus take a long time. The result of this is that the parent application that is waiting
+for them to terminate is completely frozen. However, since learning about options that
+can be passed to waitpid, a subroutine was added to keep track of terminated processes
+and subsequently wait for each of them and remove them once each process has fully
+terminated. This made killing ROS processes safer, more reliable and less likely to halt
+the parent application.
+
+3.5.3
+
+Publishing Messages Too Quickly
+
+One issue discovered during hardware testing was that velocity messages were being
+sent out far too quickly, leading to lag and a large message queue. This was due to the
+fact that messages were being re-sent during each iteration of the main loop without any
+sort of delay. Messages have to be sent constantly in order to maintain control, however
+the lack of delay was causing problems for other applications. The solution to this was to
+add a timer to the refresh function that will tick over after a configured amount of seconds.
+The value of the amount of time to wait is defined in the configuration file which gives the
+user the ability to adjust it according to the needs of the hardware being used. Additionally,
+it was found that the queue for the ROS publisher was too large at 100 and should have
+been set to 10 to further limit the amount of messages that are sent at any one time.
+
+14 of 31
+
+Chapter 4
+
+Testing
+
+Chapter 4
+
+Testing
+• Tested on different terminal devices including st, urxvt, xterm, gnome-terminal, kdeterminal (fails), plain tty and tmux running in the tty.
+
+4.1
+
+Overall Approach to Testing
+
+As an agile project, tests evolved alongside the codebase as new features were introduced. Testing was conducted manually after each project build utilising a sample configuration file as well as various example programs (see Appendix C).
+Usually when a bigger part of the software was to be added, a separate program with the
+same functionality of the subsystem was constructed and later integrated if it performed
+as expected.
+Tests that involved interacting with robots were performed using a simulation, specifically
+turtlesim [19]. However, when the project was mature in its development, tests were being
+performed on actual hardware.
+
+4.2
+
+System Testing
+
+4.3
+
+Hardware Testing
+
+4.4
+
+User Interface Testing
+
+• Testing scrolling using scrolltest program - observe change in bar size and increment
+amount
+
+15 of 31
+
+Chapter 4
+
+4.5
+
+Testing
+
+Stress Testing
+
+The application is deliberately very minimal in order to deal with multiple process output
+streams without impacting performance. However, processing this output is done in real
+time in one loop so stress testing the refresh rate of the program is important. The main
+form of stress testing employed was an example program in Appendix C which prints
+numbers incrementing from 0 to any arbitrary amount. There is no delay used in this
+program so the update rate is as fast as the hardware allows it. Several instances of this
+program were run at one time within the application. This allowed for testing the refresh
+rate of the printing function as well as how the program dealt with updating several tabs
+at a high refresh rate.
+
+4.6
+
+User Testing
+
+Each sprint focused on delivering demonstrable features that have an observable impact
+on the application from the perspective of the user. At the end of a sprint, during the
+weekly meeting with the project supervisor and client, there was an opportunity to try newly
+developed features on a laptop. Although, later in the project, this became impossible
+as the application required ROS in order to run which was not installed on said laptop.
+This was mainly due to the difficulty of installing ROS on Linux distributions not based on
+Ubuntu such as Arch.
+The replacement for this was to show screen casts of the new features alongside commentary and further discussion. These screen casts included a log of every keystroke
+using screenkey [20] in order to make it clear what is happening in the video. These
+demonstrations usually lead to new features/requirements being added due to a better
+understanding of how the software was developing from a usability perspective. User
+tests were deliberately frequent and varied in order to respond to change more effectively
+and to test the latest and more appropriate aspects of the system.
+
+16 of 31
+
+Chapter 5
+
+Evaluation
+
+Chapter 5
+
+Evaluation
+5.1
+
+Evaluation of Agile Approach
+
+Due to the uncertainty of how the requirements would manifest as well as the knowledge
+that plans would inevitably change, an agile approach seemed most appropriate. This
+initial decision proved to be most effective as it allowed for rapid prototyping and proving
+concepts before moving forward with potentially uninformed rigorous design. This was
+also closely aligned with the fact that meetings with the project supervisor occurred regularly and frequently. Given that the supervisor was also the client/user of the application,
+it was suitable to show regular prototypes as a form of user testing. The ability to respond
+to change combined with the technical experience of the project supervisor meant that
+the correct decisions were taken even without a formal design.
+
+5.2
+
+Identifying the Requirements
+
+Requirements were identified as user stories at the beginning of the project. These remained relatively constant with some minor additions such as the ability to scroll through
+process output.
+
+5.3
+
+Design Decisions
+
+5.4
+
+Appropriateness of Tools Used
+
+5.5
+
+Relevance to Degree Scheme
+
+The relevance of this project to my degree scheme (Artificial Intelligence and Robotics)
+was questioned before the start of the semester. This was primarily due to the lack of
+
+17 of 31
+
+Chapter 5
+
+Evaluation
+
+robotics involved in the initial specifications of the project. The argument was made that it
+was more associated with either a software engineering or system management project.
+Due to this decision, it was decided to include additional requirements. These were to
+create a way to operate the robot from the application as well as display ROS topic information.
+
+5.6
+
+Application and Impact
+
+5.7
+
+Time Management
+
+At the beginning of a sprint, tasks were chosen in accordance with the assessment of
+velocity. As a result, it was foreseen how much should be completed within the sprint
+which provided a measure of how well time was being managed. On a day-to-day basis,
+due to the ability to carry out work at any location (ie. from home) for most of the project,
+it was possible to start working first thing in the morning. This provided motivation to
+complete more work as the day progressed and resulted in more intense focus on the
+allotted tasks at hand. There were unfortunately long periods where little to work was
+completed due to illness. However, on days where the usual methods of working were
+not sufficient, techniques such as the pomodoro technique [21] were employed to help
+manage time.
+There was no use of a schedule which has advantages and disadvantages. The obvious
+disadvantage is the inherent disorganisation that comes with a lack of a formal schedule.
+However, an advantage of this is the ability to have more intense focus on the project as a
+whole instead of constantly switching between tasks. Also, this approach provides plenty
+of opportunity to prioritise and re-organise work if this is indeed necessary. These reasons
+create a time management methodology that maintains focus and ultimately fits into the
+agile nature of the project.
+Due to these methods, time management was adequate enough to finish the main project.
+However, some steps could have been taken to manage time more effectively with more
+order and organisation to the day. That being said, what was employed was suitable and
+necessary for me as an individual as opposed to alternative approaches that may not have
+provided any benefit to me.
+
+5.8
+
+Evaluation of Additional Project Goals
+
+5.9
+
+What Could Have Been Done Differently
+
+18 of 31
+
+Annotated Bibliography
+[1] “Tmux github home page,” last accessed on 10th of April 2019. [Online]. Available:
+https://github.com/tmux/tmux/wiki
+Home page for the terminal multiplexer Tmux which was used as inspiration
+for parts of this project
+[2] “ranger home page,” last accessed on 10th of April 2019. [Online]. Available:
+https://ranger.github.io/
+Home page of the file manager ’ranger’ used as inspiration for the design
+of the user interface
+[3] “Ncurses man page,” last accessed on the 31st of January 2019. [Online]. Available:
+https://invisible-island.net/ncurses/man/ncurses.3x.html
+The official manual for ncurses usage. This is also freely available on Unix
+systems. It provides compilation instructions, basic usage and a complete
+list of functions with their own man pages.
+[4] “Termbox github page,” last accessed on 10th April 2019. [Online]. Available:
+https://github.com/nsf/termbox
+Github page for termbox, a TUI programming library similar to ncurses
+[5] D. Araps, “Bash tui guide,” last accessed on 10th April 2019. [Online]. Available:
+https://github.com/dylanaraps/writing-a-tui-in-bash
+A guide showing how to write a non-graphical interface using pure bash
+[6] “Invisible island cdk,” 1999, last accessed on 4th of February 2019. [Online].
+Available: https://invisible-island.net/cdk/
+The homepage for Curses Development Kit information and downloads.
+There is also information on ncurses in general.
+[7] “Ncurses programming howto,”
+2005,
+of January 2019. [Online]. Available:
+NCURSES-Programming-HOWTO/
+
+last accessed on the 31st
+http://www.tldp.org/HOWTO/
+
+This website provides an extensive tutorial on NCURSES programming
+and features. It includes detailed explanations of core concepts and basic
+examples of these as well as more advanced libraries and techniques.
+19 of 31
+
+Chapter 5
+
+ANNOTATED BIBLIOGRAPHY
+
+[8] “Ros.org,” last accessed on 31st of January 2019. [Online]. Available: www.ros.org
+The official ROS website homepage. The Robotics Operating System is
+a middlewear for programming and controlling robots and is available for
+Linux.
+[9] “Neovim homepage,” last accessed on 18th April 2019. [Online]. Available:
+https://neovim.io/
+Neovim is a fork of the modal text editor vim
+[10] “Synthing homepage,” last accessed on 18th April 2019. [Online]. Available:
+https://syncthing.net/
+Syncthing is an open source cloud service used for file synchronisation.
+[11] “Yaml-cpp github page,” last accessed on 19th April 2019. [Online]. Available:
+https://github.com/jbeder/yaml-cpp
+Yaml-cpp is a C++ library for reading YAML files and is also used by ROS
+[12] “Exec manual page,” last accessed on 22nd April 2019. [Online]. Available:
+https://linux.die.net/man/3/execv
+The exec family of functions are used to run separate executables within a
+C program
+[13] “Boost libraries hom page,” last Accessed on 22nd April 2019. [Online]. Available:
+https://www.boost.org/
+The boost libraries provide useful utilities for C++ programming and are
+available under the Boost License
+[14] “Manual page for pseudo-terminals,” last accessed on 15th April 2019. [Online].
+Available: https://linux.die.net/man/7/pty
+The man page for pty’s describing their usage and history
+[15] D. Krasner, “tty8 github page,” last accessed on 10th of April 2019. [Online].
+Available: https://github.com/dimkr/tty8
+Github page for a simple terminal multiplexer used as inspiration for parts
+of this project.
+[16] “Regex c++ library,” last accessed on 22nd April 2019. [Online]. Available:
+http://www.cplusplus.com/reference/regex/
+Regex is a part of the C++ standard library and is used to manipulate
+strings using regular expressions
+[17] “Popen man page,” last accessed on 5th of March 2019. [Online]. Available:
+https://linux.die.net/man/3/popen
+The manual page for the popen function under the stdio.h C library
+20 of 31
+
+Chapter 5
+
+ANNOTATED BIBLIOGRAPHY
+
+[18] “Pkill man page,” last accessed on 15th of April 2019. [Online]. Available:
+https://linux.die.net/man/1/pkill
+The manual page for the pkill UNIX utility
+[19] “Turtlesim,” last accessed on 17th April 2019. [Online]. Available:
+//wiki.ros.org/turtlesim
+
+https:
+
+The ROS package webpage for the package turtlesim used for testing
+[20] “Homepage for the program screenkey,” last accessed on 15th April 2019. [Online].
+Available: https://www.thregr.org/∼wavexx/software/screenkey/
+Website for screenkey, a program used to display on screen what
+keystrokes are being pressed
+[21] F. Cirillo, “The pomodoro technique,” last accessed on 17th April 2019. [Online].
+Available: https://francescocirillo.com/pages/pomodoro-technique
+Primary information page on the pomodoro time saving technique
+[22] “The 3-clause bsd license,” last accessed on 22nd April 2019. [Online]. Available:
+https://opensource.org/licenses/BSD-3-Clause
+This is a template describing the usage of the 3-clause BSD license
+[23] “Ncurses license,” last accessed on 22nd April 2019. [Online]. Available:
+https://invisible-island.net/ncurses/ncurses-license.html
+A comprehensive description of the ncurses license regarding its history
+and complications
+[24] “tty8 liscense,” last accessed on 10th of April 2019. [Online]. Available: https:
+//github.com/dimkr/tty8/blob/master/COPYING
+Licence for the tty8 terminal multiplexer included in the respective Github
+repository. This software uses the MIT license.
+[25] “Yaml-cpp license,” last accessed on 22nd April 2019. [Online]. Available:
+https://github.com/jbeder/yaml-cpp/blob/master/LICENSE
+Licensing and copyright information for yaml-cpp
+[26] “Boost license,” last accessed on 22nd April 2019. [Online]. Available: https:
+//www.boost.org/LICENSE 1 0.txt
+The licensing for the Boost C++ libraries
+
+21 of 31
+
+Appendices
+
+22 of 31
+
+Appendix A
+
+Third-Party Code and Libraries
+
+Appendix A
+
+Third-Party Code and Libraries
+Boost C++ Libraries - This was used to parse and split string data from a YAML file.
+Version 1.69.0 was used. The library is open source and is available from the Boost
+Organisation. [13]. The library is released under the Boost license [26]. This library was
+used without modification.
+yaml-cpp library - This was used to parse a configuration file using the YAML syntax.
+Version 0.6.2 was used. The library is open source and is available from the yaml-cpp
+Github Page. [11]. The library is released under the MIT license [25]. This library was
+used without modification.
+ROS - This was used to interact with robotic systems also running ROS. The library is
+open source and is available from the ROS Website. [8]. The library is released under the
+3-Clause BSD License [22]. This library was used without modification.
+ncurses - This was used to develop a text-based user interface. The library is open source
+and is available from the ncurses homepage. [3]. The library is released under a permissive MIT-style license [23]. This library was used without modification.
+
+23 of 31
+
+Appendix B
+
+Ethics Submission
+
+Appendix B
+
+Ethics Submission
+
+24 of 31
+
+Appendix B
+
+Ethics Submission
+
+25 of 31
+
+Appendix B
+
+Ethics Submission
+
+26 of 31
+
+Appendix B
+
+Ethics Submission
+
+27 of 31
+
+Appendix C
+
+Code Examples
+
+Appendix C
+
+Code Examples
+3.1
+
+Altering Child IO Signals
+
+/*This is a modified version of a function taken from the tty8 project
+Copyright (c) 2015 Dima Krasner*/
+int flags = fcntl(pty,F_GETFL);
+fcntl(pty, F_SETSIG, SIGRTMIN + 1);
+fcntl(pty, F_SETFL, O_ASYNC | O_NONBLOCK | flags);
+fcntl(pty, F_SETOWN, pid);
+
+3.2
+
+Example Configuration File
+
+This YAML file was used as testing data throughout the project.
+command:
+- name: "list"
+exec: "/bin/ls"
+param: "-l"
+- name: "example"
+exec: "example"
+- name: "echo"
+exec: "/bin/echo"
+param: "Hello World"
+- name: "scrolling"
+exec: "scrolltest"
+param: "50"
+- name: "nf"
+exec: "/usr/bin/neofetch"
+- name: "test"
+exec: "/home/sam/.scripts/utils/media-convert"
+28 of 31
+
+Appendix C
+
+Code Examples
+
+param: "nothing"
+- name: "turtle"
+exec: "/opt/ros/melodic/bin/rosrun"
+param: "turtlesim turtlesim_node"
+- name: "myrobot"
+exec: "/opt/ros/melodic/bin/roslaunch"
+param: "myrobot car.launch"
+teleop:
+topic: "turtle1/cmd_vel"
+degradation: 0.3
+turning_increment: 0.5
+linear_increment: 2
+
+3.3
+
+Test Programs
+
+The following are example programs used for testing the main application and were written
+separately from it.
+
+3.3.1
+
+Example Program 01
+
+/*An example program used for stress testing the application*/
+#include <stdio.h>
+#include <unistd.h>
+int main() {
+int i = 0;
+while(1) {
+printf("%d\n",i);
+i++;
+}
+}
+
+3.3.2
+
+Example Program 02
+
+/*An example Program used to test scrolling functionality*/
+#include <stdio.h>
+#include <stdlib.h>
+int main(int argc, char * argv[]) {
+if (argc < 2)
+
+29 of 31
+
+Appendix C
+
+Code Examples
+
+printf("No args\n");
+else {
+for(int i = 0; i < atoi(argv[1]); i++)
+printf("%d\n",i);
+}
+return 0;
+}
+
+3.3.3
+
+Example Program 03
+
+/*An example program used for testing file reading and YAML parsing*/
+#include
+#include
+#include
+#include
+#include
+#include
+
+<yaml-cpp/yaml.h>
+<iostream>
+<string>
+<vector>
+"Process.h"
+"FileReader.h"
+
+main() {
+FileReader reader("test.yaml");
+std::vector<Process> processes = reader.getProcesses();
+processes[0].start();
+while(1) {
+processes[0].refreshBuffer(100);
+for (auto it : processes[0].getBuffer()) {
+std::cout << it;
+}
+}
+}
+
+30 of 31
+
+Appendix D
+
+Diagrams
+
+Appendix D
+
+Diagrams
+
+Figure D.1: UML class diagram of the final system
+
+31 of 31
+
+

@@ -1,0 +1,68 @@
+\contentsline {chapter}{\numberline {1}Background \& Objectives}{1}{chapter.1}% 
+\contentsline {section}{\numberline {1.1}Background}{1}{section.1.1}% 
+\contentsline {subsection}{\numberline {1.1.1}Similar Systems}{1}{subsection.1.1.1}% 
+\contentsline {subsection}{\numberline {1.1.2}Reading and Preparation}{2}{subsection.1.1.2}% 
+\contentsline {section}{\numberline {1.2}Analysis}{2}{section.1.2}% 
+\contentsline {subsection}{\numberline {1.2.1}User Stories}{3}{subsection.1.2.1}% 
+\contentsline {subsection}{\numberline {1.2.2}Project Components}{3}{subsection.1.2.2}% 
+\contentsline {subsubsection}{\numberline {1.2.2.1}User Interface}{3}{subsubsection.1.2.2.1}% 
+\contentsline {subsubsection}{\numberline {1.2.2.2}Process Management and Multitasking}{4}{subsubsection.1.2.2.2}% 
+\contentsline {subsubsection}{\numberline {1.2.2.3}Teleoperation and Monitoring}{4}{subsubsection.1.2.2.3}% 
+\contentsline {subsection}{\numberline {1.2.3}Security and Safety Issues}{4}{subsection.1.2.3}% 
+\contentsline {section}{\numberline {1.3}Process}{4}{section.1.3}% 
+\contentsline {chapter}{\numberline {2}Overall Final Design}{6}{chapter.2}% 
+\contentsline {section}{\numberline {2.1}Overall Architecture}{6}{section.2.1}% 
+\contentsline {section}{\numberline {2.2}Implementation Tools}{7}{section.2.2}% 
+\contentsline {section}{\numberline {2.3}Configuration File}{8}{section.2.3}% 
+\contentsline {section}{\numberline {2.4}User Interface}{8}{section.2.4}% 
+\contentsline {section}{\numberline {2.5}Other Design Decisions}{9}{section.2.5}% 
+\contentsline {chapter}{\numberline {3}Implementation and Design Changes}{10}{chapter.3}% 
+\contentsline {section}{\numberline {3.1}User Interface}{10}{section.3.1}% 
+\contentsline {subsection}{\numberline {3.1.1}Main Output Window}{11}{subsection.3.1.1}% 
+\contentsline {subsection}{\numberline {3.1.2}Side Bar Menu}{11}{subsection.3.1.2}% 
+\contentsline {subsection}{\numberline {3.1.3}Tab Bar}{12}{subsection.3.1.3}% 
+\contentsline {subsection}{\numberline {3.1.4}Teleoperation Tab}{12}{subsection.3.1.4}% 
+\contentsline {subsection}{\numberline {3.1.5}Monitoring Tab}{13}{subsection.3.1.5}% 
+\contentsline {section}{\numberline {3.2}Process Management}{14}{section.3.2}% 
+\contentsline {subsection}{\numberline {3.2.1}Starting Processes}{14}{subsection.3.2.1}% 
+\contentsline {subsection}{\numberline {3.2.2}Emulating Teletype Interfaces}{15}{subsection.3.2.2}% 
+\contentsline {subsection}{\numberline {3.2.3}Capturing Process Output}{16}{subsection.3.2.3}% 
+\contentsline {subsection}{\numberline {3.2.4}Killing Processes}{17}{subsection.3.2.4}% 
+\contentsline {section}{\numberline {3.3}Teleoperation}{18}{section.3.3}% 
+\contentsline {section}{\numberline {3.4}Monitoring}{19}{section.3.4}% 
+\contentsline {chapter}{\numberline {4}Testing}{20}{chapter.4}% 
+\contentsline {section}{\numberline {4.1}Overall Approach to Testing}{20}{section.4.1}% 
+\contentsline {section}{\numberline {4.2}Hardware Testing}{20}{section.4.2}% 
+\contentsline {subsection}{\numberline {4.2.1}All dependencies Satisfied}{21}{subsection.4.2.1}% 
+\contentsline {subsection}{\numberline {4.2.2}Successful Code Compilation}{21}{subsection.4.2.2}% 
+\contentsline {subsection}{\numberline {4.2.3}User Interface Displaying Properly}{21}{subsection.4.2.3}% 
+\contentsline {subsection}{\numberline {4.2.4}Processes Terminating Correctly}{22}{subsection.4.2.4}% 
+\contentsline {subsection}{\numberline {4.2.5}Appropriate Signals Sent from the Teleoperation Tab}{22}{subsection.4.2.5}% 
+\contentsline {section}{\numberline {4.3}User Interface Testing}{22}{section.4.3}% 
+\contentsline {section}{\numberline {4.4}Stress Testing}{22}{section.4.4}% 
+\contentsline {section}{\numberline {4.5}User Testing}{23}{section.4.5}% 
+\contentsline {chapter}{\numberline {5}Evaluation}{24}{chapter.5}% 
+\contentsline {section}{\numberline {5.1}Evaluation of Agile Approach}{24}{section.5.1}% 
+\contentsline {section}{\numberline {5.2}Identifying the Requirements}{24}{section.5.2}% 
+\contentsline {section}{\numberline {5.3}Design Decisions}{24}{section.5.3}% 
+\contentsline {section}{\numberline {5.4}Appropriateness of Tools Used}{25}{section.5.4}% 
+\contentsline {section}{\numberline {5.5}Relevance to Degree Scheme}{25}{section.5.5}% 
+\contentsline {section}{\numberline {5.6}Application and Impact}{25}{section.5.6}% 
+\contentsline {section}{\numberline {5.7}Time Management}{26}{section.5.7}% 
+\contentsline {section}{\numberline {5.8}Future Work}{26}{section.5.8}% 
+\contentsline {subsection}{\numberline {5.8.1}Extra Usability Features}{27}{subsection.5.8.1}% 
+\contentsline {subsection}{\numberline {5.8.2}Signal Handling}{27}{subsection.5.8.2}% 
+\contentsline {subsection}{\numberline {5.8.3}More Customisability}{27}{subsection.5.8.3}% 
+\contentsline {subsection}{\numberline {5.8.4}Help Menu}{27}{subsection.5.8.4}% 
+\contentsline {chapter}{Annotated Bibliography}{28}{subsection.5.8.4}% 
+\contentsline {chapter}{Appendices}{31}{chapter*.11}% 
+\contentsline {chapter}{\numberline {A}Third-Party Code and Libraries}{33}{appendix.A}% 
+\contentsline {chapter}{\numberline {B}Ethics Submission}{34}{appendix.B}% 
+\contentsline {chapter}{\numberline {C}Code Examples}{38}{appendix.C}% 
+\contentsline {section}{\numberline {3.1}Altering Child IO Signals}{38}{section.C.1}% 
+\contentsline {section}{\numberline {3.2}Example Configuration File}{38}{section.C.2}% 
+\contentsline {section}{\numberline {3.3}Test Programs}{39}{section.C.3}% 
+\contentsline {subsection}{\numberline {3.3.1}Example Program 01}{39}{subsection.C.3.1}% 
+\contentsline {subsection}{\numberline {3.3.2}Example Program 02}{40}{subsection.C.3.2}% 
+\contentsline {subsection}{\numberline {3.3.3}Example Program 03}{40}{subsection.C.3.3}% 
+\contentsline {chapter}{\numberline {D}Diagrams}{41}{appendix.D}% 

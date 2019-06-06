@@ -1,0 +1,299 @@
+\begin{thebibliography}{10}
+\providecommand{\url}[1]{#1}
+\csname url@rmstyle\endcsname
+\providecommand{\newblock}{\relax}
+\providecommand{\bibinfo}[2]{#2}
+\providecommand\BIBentrySTDinterwordspacing{\spaceskip=0pt\relax}
+\providecommand\BIBentryALTinterwordstretchfactor{4}
+\providecommand\BIBentryALTinterwordspacing{\spaceskip=\fontdimen2\font plus
+\BIBentryALTinterwordstretchfactor\fontdimen3\font minus
+  \fontdimen4\font\relax}
+\providecommand\BIBforeignlanguage[2]{{%
+\expandafter\ifx\csname l@#1\endcsname\relax
+\typeout{** WARNING: IEEEtran.bst: No hyphenation pattern has been}%
+\typeout{** loaded for the language `#1'. Using the pattern for}%
+\typeout{** the default language instead.}%
+\else
+\language=\csname l@#1\endcsname
+\fi
+#2}}
+
+\bibitem{tmux}
+\BIBentryALTinterwordspacing
+``Tmux github home page.'' [Online]. Available:
+  \url{https://github.com/tmux/tmux/wiki}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent Home page for the terminal multiplexer Tmux which
+  was used as inspiration for parts of this project \end{quotation}
+
+\bibitem{ranger}
+\BIBentryALTinterwordspacing
+``ranger home page.'' [Online]. Available: \url{https://ranger.github.io/}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent Home page of the file manager 'ranger' used as
+  inspiration for the design of the user interface \end{quotation}
+
+\bibitem{ncurses}
+\BIBentryALTinterwordspacing
+``Ncurses man page.'' [Online]. Available:
+  \url{https://invisible-island.net/ncurses/man/ncurses.3x.html}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent The official manual for ncurses usage. This is also
+  freely available on Unix systems. It provides compilation instructions, basic
+  usage and a complete list of functions with their own man pages.
+  \end{quotation}
+
+\bibitem{termbox}
+\BIBentryALTinterwordspacing
+``Termbox github page.'' [Online]. Available:
+  \url{https://github.com/nsf/termbox}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent Github page for termbox, a TUI programming library
+  similar to ncurses \end{quotation}
+
+\bibitem{bash-tui}
+\BIBentryALTinterwordspacing
+D.~Araps, ``Bash tui guide.'' [Online]. Available:
+  \url{https://github.com/dylanaraps/writing-a-tui-in-bash}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent A guide showing how to write a non-graphical
+  interface using pure bash \end{quotation}
+
+\bibitem{cdk}
+\BIBentryALTinterwordspacing
+``Cdk home page,'' 1999. [Online]. Available:
+  \url{https://invisible-island.net/cdk/}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent The homepage for Curses Development Kit information
+  and downloads. There is also information on ncurses in general.
+  \end{quotation}
+
+\bibitem{ncurses-howto}
+\BIBentryALTinterwordspacing
+``Ncurses programming howto,'' 2005. [Online]. Available:
+  \url{http://www.tldp.org/HOWTO/NCURSES-Programming-HOWTO/}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent This website provides an extensive tutorial on
+  NCURSES programming and features. It includes detailed explanations of core
+  concepts and basic examples of these as well as more advanced libraries and
+  techniques. \end{quotation}
+
+\bibitem{ros}
+\BIBentryALTinterwordspacing
+``Ros.org.'' [Online]. Available: \url{www.ros.org}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent The official ROS website homepage. The Robotics
+  Operating System is a middlewear for programming and controlling robots and
+  is available for Linux. \end{quotation}
+
+\bibitem{neovim}
+\BIBentryALTinterwordspacing
+``Neovim homepage.'' [Online]. Available: \url{https://neovim.io/}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent Neovim is a fork of the modal text editor vim
+  \end{quotation}
+
+\bibitem{syncthing}
+\BIBentryALTinterwordspacing
+``Synthing homepage.'' [Online]. Available: \url{https://syncthing.net/}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent Syncthing is an open source cloud service used for
+  file synchronisation. \end{quotation}
+
+\bibitem{yaml-cpp}
+\BIBentryALTinterwordspacing
+``Yaml-cpp github page.'' [Online]. Available:
+  \url{https://github.com/jbeder/yaml-cpp}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent Yaml-cpp is a C++ library for reading YAML files
+  and is also used by ROS \end{quotation}
+
+\bibitem{exec}
+\BIBentryALTinterwordspacing
+``Exec manual page.'' [Online]. Available:
+  \url{https://linux.die.net/man/3/execv}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent The exec family of functions are used to run
+  separate executables within a C program \end{quotation}
+
+\bibitem{boost}
+\BIBentryALTinterwordspacing
+``Boost libraries hom page.'' [Online]. Available: \url{https://www.boost.org/}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent The boost libraries provide useful utilities for
+  C++ programming and are available under the Boost License \end{quotation}
+
+\bibitem{forkpty}
+\BIBentryALTinterwordspacing
+``Forkpty manual page.'' [Online]. Available:
+  \url{https://linux.die.net/man/3/forkpty}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent Forkpty is used to fork a C program while
+  simultaneously creating a pseudo-terminal in order to streamline the process
+  \end{quotation}
+
+\bibitem{pty}
+\BIBentryALTinterwordspacing
+``Manual page for pseudo-terminals.'' [Online]. Available:
+  \url{https://linux.die.net/man/7/pty}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent The man page for pty's describing their usage and
+  history \end{quotation}
+
+\bibitem{tty8}
+\BIBentryALTinterwordspacing
+D.~Krasner, ``tty8 github page.'' [Online]. Available:
+  \url{https://github.com/dimkr/tty8}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent Github page for a simple terminal multiplexer used
+  as inspiration for parts of this project. \end{quotation}
+
+\bibitem{cpp-regex}
+\BIBentryALTinterwordspacing
+``Regex c++ library.'' [Online]. Available:
+  \url{http://www.cplusplus.com/reference/regex/}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent Regex is a part of the C++ standard library and is
+  used to manipulate strings using regular expressions \end{quotation}
+
+\bibitem{regex-tester}
+\BIBentryALTinterwordspacing
+``Regex tester.'' [Online]. Available: \url{https://www.regexpal.com/}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent Online tool for visualising the effects of regular
+  expressions on test data \end{quotation}
+
+\bibitem{popen}
+\BIBentryALTinterwordspacing
+``Popen man page.'' [Online]. Available:
+  \url{https://linux.die.net/man/3/popen}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent The manual page for the popen function under the
+  stdio.h C library \end{quotation}
+
+\bibitem{fdopen}
+\BIBentryALTinterwordspacing
+``fdopen man page.'' [Online]. Available:
+  \url{https://linux.die.net/man/3/fdopen}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent fdopen is used to open a given file descriptor as a
+  file stream in C \end{quotation}
+
+\bibitem{pkill}
+\BIBentryALTinterwordspacing
+``Pkill man page.'' [Online]. Available:
+  \url{https://linux.die.net/man/1/pkill}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent The manual page for the pkill UNIX utility
+  \end{quotation}
+
+\bibitem{shapeshifter}
+\BIBentryALTinterwordspacing
+``Ros package ros\_type\_introspection.'' [Online]. Available:
+  \url{https://wiki.ros.org/ros\_type\_introspection}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent Package information regarding shapeshifters and
+  other generic message utilities \end{quotation}
+
+\bibitem{turtlesim}
+\BIBentryALTinterwordspacing
+``Turtlesim.'' [Online]. Available: \url{https://wiki.ros.org/turtlesim}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent The ROS package webpage for the package turtlesim
+  used for testing \end{quotation}
+
+\bibitem{st}
+\BIBentryALTinterwordspacing
+``The suckless terminal.'' [Online]. Available: \url{https://st.suckless.org/}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent ST is a minimal terminal emulator for X
+  \end{quotation}
+
+\bibitem{xterm}
+\BIBentryALTinterwordspacing
+``Xterm.'' [Online]. Available: \url{https://invisible-island.net/xterm/}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent xterm is a terminal emulator for the X window
+  system \end{quotation}
+
+\bibitem{urxvt}
+\BIBentryALTinterwordspacing
+``Rxvt-unicode arch wiki page.'' [Online]. Available:
+  \url{https://wiki.archlinux.org/index.php/Rxvt-unicode}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent An X terminal emulator forked from rxvt
+  \end{quotation}
+
+\bibitem{konsole}
+\BIBentryALTinterwordspacing
+``Konsole.'' [Online]. Available: \url{https://konsole.kde.org/}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent Konsole is the default KDE terminal application
+  \end{quotation}
+
+\bibitem{neofetch}
+\BIBentryALTinterwordspacing
+D.~Araps, ``Neofetch github page.'' [Online]. Available:
+  \url{https://github.com/dylanaraps/neofetch}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent Neofetch is a command line system information tool
+  that displays colour formatted textual output \end{quotation}
+
+\bibitem{screenkey}
+\BIBentryALTinterwordspacing
+``Homepage for the program screenkey.'' [Online]. Available:
+  \url{https://www.thregr.org/~wavexx/software/screenkey/}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent Website for screenkey, a program used to display on
+  screen what keystrokes are being pressed \end{quotation}
+
+\bibitem{pomodoro}
+\BIBentryALTinterwordspacing
+F.~Cirillo, ``The pomodoro technique.'' [Online]. Available:
+  \url{https://francescocirillo.com/pages/pomodoro-technique}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent Primary information page on the pomodoro time
+  saving technique \end{quotation}
+
+\bibitem{bsd-license-3}
+\BIBentryALTinterwordspacing
+``The 3-clause bsd license.'' [Online]. Available:
+  \url{https://opensource.org/licenses/BSD-3-Clause}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent This is a template describing the usage of the
+  3-clause BSD license \end{quotation}
+
+\bibitem{ncurses-license}
+\BIBentryALTinterwordspacing
+``Ncurses license.'' [Online]. Available:
+  \url{https://invisible-island.net/ncurses/ncurses-license.html}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent A comprehensive description of the ncurses license
+  regarding its history and complications \end{quotation}
+
+\bibitem{tty8-license}
+\BIBentryALTinterwordspacing
+``tty8 liscense.'' [Online]. Available:
+  \url{https://github.com/dimkr/tty8/blob/master/COPYING}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent Licence for the tty8 terminal multiplexer included
+  in the respective Github repository. This software uses the MIT license.
+  \end{quotation}
+
+\bibitem{yaml-cpp-license}
+\BIBentryALTinterwordspacing
+``Yaml-cpp license.'' [Online]. Available:
+  \url{https://github.com/jbeder/yaml-cpp/blob/master/LICENSE}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent Licensing and copyright information for yaml-cpp
+  \end{quotation}
+
+\bibitem{boost-license}
+\BIBentryALTinterwordspacing
+``Boost license.'' [Online]. Available:
+  \url{https://www.boost.org/LICENSE_1_0.txt}
+\BIBentrySTDinterwordspacing
+ \begin{quotation}\noindent The licensing for the Boost C++ libraries
+  \end{quotation}
+
+\end{thebibliography}

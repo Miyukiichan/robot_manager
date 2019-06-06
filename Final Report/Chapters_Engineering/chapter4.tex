@@ -1,0 +1,102 @@
+\chapter{Testing}
+
+%Detailed descriptions of every test case are definitely not what is required here. What is important is to show that you adopted a sensible strategy that was, in principle, capable of testing the system adequately even if you did not have the time to test the system fully.
+
+%Provide information in the body of your report and the appendix to explain the testing that has been performed. How does this testing address the requirements and design for the project?
+
+%How comprehensive is the testing within the constraints of the project?  Are you testing the normal working behaviour? Are you testing the exceptional behaviour, e.g. error conditions? Are you testing security issues if they are relevant for your project? 
+
+%Have you tested your system on ``real users''? For example, if your system is supposed to solve a problem for a business, then it would be appropriate to present your approach to involve the users in the testing process and to record the results that you obtained. Depending on the level of detail, it is likely that you would put any detailed results in an appendix.
+
+%Whilst testing with ``real users'' can be useful, don't see it as a way to shortcut detailed testing of your own. Think about issues discussed in the lectures about until testing, integration testing, etc. User testing without sensible testing of your own is not a useful activity.
+
+%The following sections indicate some areas you might include. Other sections may be more appropriate to your project. 
+
+\section{Overall Approach to Testing}
+
+As an agile project, tests evolved alongside the codebase as new features were introduced. Testing was conducted manually after each project build utilising a sample configuration file as well as various example programs (see Appendix \ref{appendix:c}). As a minimalist program, it was appropriate to perform full build tests regularly in order to test each individual feature as it is being developed. Once a feature is finished, the overall functionality of the existing system is evaluated. This ensures that implementing a new feature did not compromise what has already been done.
+
+Usually when a bigger part of the software was to be added, a separate program with the same functionality of the subsystem was constructed and later integrated if it performed as expected. This is useful when using new technologies or when a section of code needs to be isolated in order to be tested. Isolation was necessary due to the fact that in ncurses, it is not possible to view output printed to the console during runtime as a form of debugging. The alternative to isolating code segments would be to change the printing function which did not always work due to the encapsulated, object-oriented nature of the design. This would also involve changing significant parts of the code and thus is not ideal.
+
+Tests that involved interacting with robots were performed using a simulation, specifically {\fontfamily{pcr}\selectfont turtlesim}\cite{turtlesim}. This simulation listens to and interprets the same messages as the robots used in department in a similar way. It also runs well which is ideal for testing scenarios involving opening and closing the simulation as well as viewing {\fontfamily{pcr}\selectfont ROS} output which proved to be challenging at first . However, when the project was mature in its development, tests were being performed on actual hardware.
+
+%\section{Regular Testing}
+
+\section{Hardware Testing}
+
+Opportunities for testing on real hardware were unfortunately limited and reserved for the end of the project. Testing was carried out using Idris as the screen was already working for that robot. Idris also has plenty of safety features to avoid accidental collisions. Other safety considerations and measures that were taken can be seen in Section \ref{safety}. The overall goal of this testing was mainly preparation for the final demonstration and assurance that everything would work without trouble. The aspects of the system that were tested are described in the following sections.
+
+\subsection{All dependencies Satisfied}
+
+There are a number of dependencies that are required at compile time such as {\fontfamily{pcr}\selectfont yaml-cpp} and the {\fontfamily{pcr}\selectfont boost} libraries, among others. The only dependency not satisfied at the time of testing was {\fontfamily{pcr}\selectfont yaml-cpp} which was then subsequently installed on Idris.
+
+\subsection{Successful Code Compilation}
+
+There were no issues here aside from an error regarding the minimum version of CMake required. This was resolved by simply changing the requirements in the CMake configuration file.
+
+\subsection{User Interface Displaying Properly}
+\label{ui_display_prop}
+
+In some terminal emulators, the user interface does not display as it should. This is potentially due to character encoding errors. Prior to testing on Idris itself, the application was tested in various terminal environments, the results of which are shown below:
+
+%\begin{itemize}
+  %\item {\fontfamily{pcr}\selectfont st}\cite{st} - PASSED
+  %\item {\fontfamily{pcr}\selectfont xterm}\cite{xterm} - PASSED
+  %\item {\fontfamily{pcr}\selectfont urxvt}\cite{urxvt} - PASSED
+  %\item The {\fontfamily{pcr}\selectfont GNOME} Terminal - PASSED
+  %\item {\fontfamily{pcr}\selectfont Konsole} (KDE Terminal)\cite{konsole} - FAILED
+  %\item A plain {\fontfamily{pcr}\selectfont TTY} running on {\fontfamily{pcr}\selectfont Arch}, {\fontfamily{pcr}\selectfont Parabola} and {\fontfamily{pcr}\selectfont Ubuntu}  Linux - PASSED
+  %\item {\fontfamily{pcr}\selectfont Tmux} running in a plain {\fontfamily{pcr}\selectfont Ubuntu} TTY - PASSED
+%\end{itemize}
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{| m{15em} | c |}
+  \hline
+  Test Environment & Pass/Fail \\
+  \hline
+    {\fontfamily{pcr}\selectfont st}\cite{st} & Pass \\
+  \hline
+    {\fontfamily{pcr}\selectfont xterm}\cite{xterm} & Pass \\
+  \hline
+    {\fontfamily{pcr}\selectfont urxvt}\cite{urxvt} & Pass \\
+  \hline
+    The {\fontfamily{pcr}\selectfont GNOME} Terminal & Pass \\
+  \hline
+    {\fontfamily{pcr}\selectfont Konsole} (KDE Terminal)\cite{konsole} & Fail \\
+  \hline
+    Plain {\fontfamily{pcr}\selectfont TTY} running on {\fontfamily{pcr}\selectfont Arch}, {\fontfamily{pcr}\selectfont Parabola} and {\fontfamily{pcr}\selectfont Ubuntu} Linux & Pass \\
+  \hline
+    Tmux running in a plain {\fontfamily{pcr}\selectfont Ubuntu TTY} & Pass \\
+  \hline
+\end{tabular}
+  \caption{Test results of running application in various terminal emulators}
+\end{table}
+
+Idris is running a plain {\fontfamily{pcr}\selectfont TTY} in {\fontfamily{pcr}\selectfont Gentoo} Linux which was able to display the application properly with no issues. There were also concerns regarding whether or not the sidebar would be too big as the width is hard coded and the mounted screens are reasonably small. However, the resolution of the screen was appropriately sized meaning that all output in each window looked sensible.
+
+\subsection{Processes Terminating Correctly}
+
+The particular processes used on Idris had not yet been tested (nor were they known exactly beforehand) and so it was important to test managing them. This provides a good example of a real life scenario. Due to one of the issues outlined in Section \ref{killing}, it was discovered through this testing that waiting for a process to close was causing problems. This lead to multiple processes having to be painstakingly killed manually from a separate computer.
+
+\subsection{Appropriate Signals Sent from the Teleoperation Tab}
+
+This test lead to the discovery of the issue detailed in Section \ref{teleop} regarding the teleoperation tab sending too many signals in rapid succession. The consequence of this was very noticeable latency when monitoring the velocity topic using {\fontfamily{pcr}\selectfont rostopic echo}.
+
+\section{User Interface Testing}
+
+The UI was tested using some example programs in Appendix \ref{appendix:c}, most notably the second example. This helped to test how the scroll bars were being drawn as well as scrolling in general by changing the amount of lines printed. Additionally, some third party programs were used such as the {\fontfamily{pcr}\selectfont GNU ls} command as well as {\fontfamily{pcr}\selectfont neofetch}\cite{neofetch}. The {\fontfamily{pcr}\selectfont ls} command was used as a simple test with a usually small output stream that was guaranteed to stop outputting new lines. {\fontfamily{pcr}\selectfont Neofetch} was used for similar reasons as well as having the ability to test how colour output is dealt with. 
+
+{\fontfamily{pcr}\selectfont Neofetch} changes several attributes (such as coloured and bold text) for some lines, creating several instances of concatenated escape codes which is an unusual test case for omitting these codes generally. This served to test how robust the printing and output capturing systems were due to its complexity. These programs were included in the configuration file and were run as part of regular testing for new features.
+
+\section{Stress Testing}
+
+The application is deliberately very minimal in order to deal with multiple process output streams without impacting performance. However, processing this output is done in real time in one loop so stress testing the refresh rate of the program is important. The main form of stress testing employed was an example program in Appendix \ref{appendix:c} which prints numbers incrementing from 0 to any arbitrary amount infinitely. Several instances of this program were run at one time within the application. This allowed for testing the refresh rate of the printing function as well as how the program dealt with updating several tabs at a high refresh rate. 
+
+There used to be no delay used in this program so the update rate was as fast as the hardware allowed it. However, this lead to 100\% of the CPU thread being used during testing and was dealt with using a five millisecond delay. A higher delay makes the interface feel sluggish and any smaller delay greatly increases the load on the CPU. The current load sits at approximately 20\% on an {\fontfamily{pcr}\selectfont Intel i7 4790K} at {\fontfamily{pcr}\selectfont 4.4GHz} running {\fontfamily{pcr}\selectfont Ubuntu}.
+
+\section{User Testing}
+
+Each sprint focused on delivering demonstrable features that have an observable impact on the application from the perspective of the user. At the end of a sprint, during the weekly meeting with the project supervisor (who is also the client), there was an opportunity for them to try newly developed features on a laptop. Although, later in the project, this became impossible as the application required {\fontfamily{pcr}\selectfont ROS} in order to run which was not installed on said laptop. This was mainly due to the difficulty of installing {\fontfamily{pcr}\selectfont ROS} on Linux distributions not based on {\fontfamily{pcr}\selectfont Ubuntu} such as {\fontfamily{pcr}\selectfont Arch}.
+
+The replacement for this was to show screen casts of the new features alongside commentary and further discussion. These screen casts included a log of every keystroke using {\fontfamily{pcr}\selectfont screenkey}\cite{screenkey} in order to make it clear what is happening in the video. These demonstrations usually lead to new features/requirements being added due to a better understanding of how the software was developing from a usability perspective. User tests were deliberately frequent and varied in order to respond to change more effectively and to test the latest and more appropriate aspects of the system.

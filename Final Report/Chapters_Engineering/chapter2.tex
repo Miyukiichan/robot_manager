@@ -1,0 +1,64 @@
+%\addcontentsline{toc}{chapter}{Development Process}
+\chapter{Overall Final Design}
+\label{chapter:design}
+
+%You should concentrate on the more important aspects of the design. It is essential that an overview is presented before going into detail. As well as describing the design adopted it must also explain what other designs were considered and why they were rejected.
+
+%The design should describe what you expected to do, and might also explain areas that you had to revise after some investigation.
+
+%Typically, for an object-oriented design, the discussion will focus on the choice of objects and classes and the allocation of methods to classes. The use made of reusable components should be described and their source referenced. Particularly important decisions concerning data structures usually affect the architecture of a system and so should be described here.
+
+%How much material you include on detailed design and implementation will depend very much on the nature of the project. It should not be padded out. Think about the significant aspects of your system. For example, describe the design of the user interface if it is a critical aspect of your system, or provide detail about methods and data structures that are not trivial. Do not spend time on long lists of trivial items and repetitive descriptions. If in doubt about what is appropriate, speak to your supervisor.
+
+%You should also identify any support tools that you used. You should discuss your choice of implementation tools - programming language, compilers, database management system, program development environment, etc.
+
+The evolution of the design of the application is inherent to the agile methodology adopted. The design outlined in this section will illustrate the final design as well as talk about how each design element has evolved when appropriate. Some of the design has been consistent from the beginning of the project such as the general user interface design. However, other parts needed to evolve due to a change in the understanding of the requirements and the technical limitations of the technologies used. There is also discussion of some decisions made that are not relevant to the content in Chapter \ref{chapter:implementation}.
+
+Much of the initial design consisted of user stories arranged on a story board alongside basic class descriptions. These items were arranged on the story board in such a way that the classes would cluster around relevant stories and create spatial CRC "cards".
+
+\section{Overall Architecture}
+
+The final design of this project uses an object oriented approach to development making use of inheritance and encapsulation. The class diagram illustrating this design is included in Appendix \ref{appendix:d}.
+
+As is common for object-oriented programs, the main method is usually small and merely exists to construct an object that will itself run the application. Regardless of this convention, it was decided that this is wasteful and that the main function should be used appropriately. The usefulness of objects within the design is arguably restricted to the utilisation of inheritance for the front end classes. This is likely due to a personal bias towards procedural programming paradigms which is why {\fontfamily{pcr}\selectfont C} was initially used as noted in Section \ref{implementation_tools}. However, the re-implementation in {\fontfamily{pcr}\selectfont C++} affected the initial design as it was decided that making effective use of the language's features (including objects) was important, regardless of personal preference.
+
+Each section of the screen is represented by a Window object that defines its co-ordinates as well as dictates the behaviour of printing. The Menu inherits from the Window to take advantage of the printing functionality as well as implement menu selection. The TabBar then inherits from the menu as it is effectively the same aside from the orientation and the ability to iteratively refresh processes. It seemed more appropriate to make the tab bar act as the container/manager for the running processes as opposed to having a dedicated object for such activity. This provides a way to bridge the gap between the front and back ends. The teleoperation interface was planned to inherit from the window class as this seemed to make the most sense at the time. However, it was deemed to be unnecessary as much of the functionality was unrelated to the other windows. As a result, the front end of the teleoperation system is a function in Window, whereas the back end encompasses its own independent class.
+
+The Button class does not inherit from window even though much of its functionality is the same. The reason for this is that the window class automatically spawns with a list of buttons. This could be potentially changed to reduce duplicated code, although the benefits gained are not substantially worth it.
+
+A class that was omitted was the ScrollBar class which would have been used for spawning and updating the scrollbars. It would also scroll through the printed output and maintain the current scrolling position. This was also found to be redundant due to the simplicity of scrolling and how easy it would be to integrate it directly into the main printing function.
+
+The back end classes mainly consist of Monitor, Teleop and Process. The monitoring and teleoperation classes are mostly used to manage {\fontfamily{pcr}\selectfont ROS} messages in a way that can be interfaced with the from end. The process class is integral for process management and stores information about each process as well as provides tools to start/stop them.
+
+In terms of the overall behaviour, the application is based around the main loop that accepts user input and acts accordingly. Within this loop, each refresh subroutine occurs once such as the teleoperation update or updating process output buffers. This sort of structure can cause issues in terms of temporary stalling during touch input due to the delay needed to register clicks properly and can cause some latency. However, the behaviour effectively spreads the load of each minimal task to the point where there is no performance impact. As a minimal system focused on multitasking, this kind of behavioural structure is optimal when operating on a single thread. Multi-threading was briefly considered, but was deemed to be unnecessary and would likely lead to more problems than it would potentially solve.
+
+\section{Implementation Tools}
+\label{implementation_tools}
+
+The application is written in {\fontfamily{pcr}\selectfont C++11} using a combination of {\fontfamily{pcr}\selectfont C} and {\fontfamily{pcr}\selectfont C++} libraries. The choice to use {\fontfamily{pcr}\selectfont C++} is primarily based on the need to program using {\fontfamily{pcr}\selectfont ROS}\cite{ros}. {\fontfamily{pcr}\selectfont ROS} wrappers only exist for {\fontfamily{pcr}\selectfont C++}, {\fontfamily{pcr}\selectfont Python} and {\fontfamily{pcr}\selectfont LISP}, making these the only choices for languages to use. It was decided to use {\fontfamily{pcr}\selectfont C++} over the other {\fontfamily{pcr}\selectfont ROS} supported alternatives simply due to increased runtime speed as well as existing knowledge and experience in using {\fontfamily{pcr}\selectfont C++}. This decision is one that evolved during development as the initial application was written in {\fontfamily{pcr}\selectfont C}. This was due to the mistaken understanding that all interactions with {\fontfamily{pcr}\selectfont ROS} would have been through using scripts or executables. However, due to a change in the understanding of the requirements regarding how {\fontfamily{pcr}\selectfont ROS} information should be displayed, it was made clear that using {\fontfamily{pcr}\selectfont C} would have been less than ideal.
+
+In terms of development tools and environments used, {\fontfamily{pcr}\selectfont neovim}\cite{neovim} was used as a text editor as opposed to using an IDE. This is mainly due to past experience using {\fontfamily{pcr}\selectfont neovim} as well as the enhanced editting and runtime speed a minimal modal editor can afford. All work was backed up daily to a {\fontfamily{pcr}\selectfont GitLab} repository as well as automatically synchronised between two computers using {\fontfamily{pcr}\selectfont Syncthing}\cite{syncthing}.
+
+\section{Configuration File}
+
+The decision to use {\fontfamily{pcr}\selectfont YAML} as a configuration syntax is detailed in Section \ref{starting_processes} and was mainly due to convenience. The general layout consists of two sections, those being "command" and "teleop". The command section lets the user define a set of executables that they want to run using the application. The teleop section contains information on the behaviour of the teleoperation tab. Each executable needs to be referenced using its absolute path as it was decided to not take into account the path environment variable in order to have a consistent method of invoking executables. It was decided to have the location of the configuration file be in "~/.config/robot\_manager/config.yaml" as this is standard for Unix programs. It is also beneficial for the user as their own configurations can remain constant even when updating the software. An example of the configuration file can be found in Appendix \ref{appendix:c}.
+
+\section{User Interface}
+\label{ui_design}
+
+Various elements of the design of the user interface were specified before the start of the project by the client. Such elements include the addition of a tab bar showing all running processes and an area to monitor process output. An intuitive decision was to have the tab bar placed at the top of the screen and have the vast majority of the screen real estate be taken up by the main output section. This is in accordance with the standard layout of tabbed graphical applications but simply adapted to a text interface.
+
+The design of the user interface was loosely inspired by existing applications such as {\fontfamily{pcr}\selectfont ranger}\cite{ranger}. The goal of the design was to fit as much as possible onto one static screen as possible. This is mostly due to the constraints of working in an entirely text based environment as well as the usage of small display devices. As a result, the design is deliberately simple where each section is divided up into rectangles and remains consistent for the duration of the application runtime.
+
+Additionally, the consideration of ease of use had an impact on certain design choices. For instance, the area displaying available processes to run was integrated as a side bar as opposed to its own dedicated screen. This saves time if the user wants to run several processes in rapid succession without having to repeatedly switch back to the main menu.
+
+The design of the interface also accounts for touch input as well as keyboard control. This requirement was designed for with the inclusion of extra buttons on screen such as a button for closing tabs, scrollbars for viewing output history as well as onscreen buttons for teleoperation.
+
+Initial designs can be seen in Appendix \ref{appendix:d} and illustrate the change in design as a result of discussing the diagrams with the client. Figure \ref{fig:sketch02} shows the addition of scroll bars as well as the importance of keyboard input. Figure \ref{fig:sketch01} shows that the initial idea was to have monitoring information replace the commands list when in teleoperation mode and that each of those items would go to a separate screen. This was seen to be too cumbersome and involved too many unnecessary clicks according to the client. The response to this was to have everything available on one screen and to treat everything as just another tab.
+
+\section{Other Design Decisions}
+\label{other_decisions}
+
+One decision that was made was to deliberately disregard changes in terminal window size during runtime. The reason for this is that when using a plain {\fontfamily{pcr}\selectfont TTY} with no window manager, the terminal window size will remain constant. This obviously has unintended effects during testing in a graphical environment, however, during real use, this will not be an issue. This also means that it is not necessary to dynamically change the UI which would be a waste of resources and development time.
+
+A similar decision was to maintain a fixed sidebar width of 25 characters. This amount was determined to be big enough to fit any reasonably named command onto one line, but simultaneously small enough to be unobtrusive. It also means that the sizing does not have to be calculated manually which saves a step in initialisation. One potential concern early in the project was that there would be issues with displaying on smaller screen sizes. However, as noted in \ref{ui_display_prop}, this was fortunately not a problem.

@@ -1,0 +1,92 @@
+\chapter{Evaluation}
+
+%Examiners expect to find a section addressing questions such as:
+
+%\begin{itemize}
+   %\item Were the requirements correctly identified? 
+   %\item Were the design decisions correct?
+   %\item Could a more suitable set of tools have been chosen?
+   %\item How well did the software meet the needs of those who were expecting to use it?
+   %\item How well were any other project aims achieved?
+   %\item If you were starting again, what would you do differently?
+%\end{itemize}
+
+%Other questions can be addressed as appropriate for a project. 
+
+%The questions are an indication of issues you should consider. They are not intended as a specification of a list of sections.
+
+%The evaluation is regarded as an important part of the project report; it should demonstrate that you are capable not only of carrying out a piece of work but also of thinking critically about how you did it and how you might have done it better. This is seen as an important part of an honours degree. 
+
+%There will be good things in the work and aspects of the work that could be improved. As you write this section, identify and discuss the parts of the work that went well and also consider ways in which the work could be improved. 
+
+%In the latter stages of the module, we will discuss the evaluation. That will probably be around week 9, although that differs each year. 
+
+\section{Evaluation of Agile Approach}
+
+Due to the uncertainty of how the requirements would manifest as well as the knowledge that plans would inevitably change, an agile approach seemed most appropriate. This initial decision proved to be most effective as it allowed for rapid prototyping and proving concepts before moving forward with potentially uninformed rigorous design. This was also closely aligned with the fact that meetings with the project supervisor occurred regularly and frequently. Given that the supervisor was also the client/user of the application, it was suitable to show regular prototypes as a form of user testing. The ability to respond to change combined with the technical experience of the project supervisor meant that the correct decisions were taken even without a formal design.
+
+\section{Identifying the Requirements}
+
+The requirements in Section \ref{user_stories} were identified at the start of the project and remained consistent throughout the project. However, these requirements do not describe the entire system in detail as they are specifically user-oriented stories. The advantage of this is a greater focus upon implementation time, however, the downside is the lack of direction from the offset. This could have been improved and may have helped to mitigate issues faced during development. However, the approach was (and is) viewed as more appropriate for the individual project undertaken.
+
+\section{Design Decisions}
+
+As an agile projects, it was expected that some design decisions would have to be remedied later on in the project. This is due to change in requirements from the client, dealing with integration issues or responding to a change in understanding of the technologies used. Such examples have been documented in earlier sections, namely \ref{implementation_tools}, \ref{ui_design}, \ref{section:pty} and \ref{capturing_output}. However, these issues were appropriately dealt with and are only a subset of design decisions that were made. Other various decisions outlined in previous sections such as \ref{other_decisions} required no changes and the substance of what was produced suffered no ill effects due to design.
+
+\section{Appropriateness of Tools Used}
+
+The C++ language was the most appropriate tool due to the reasons outlined in Section \ref{implementation_tools}. The decision to use ncurses was also appropriate over the other alternative tools noted in Section \ref{reading_and_prep}. It is certainly more appropriate than any graphical library for the purposes of the project, despite its low-level and verbose nature.
+
+In terms of editing tools, the choice to use neovim over a more fully featured IDE arguably had some impact on development time. However, the only tangible benefit gained from using an IDE for this project is automatic code completion and refactoring. Using any integrated console is unsuitable as it would make it harder to view the application running. This means that many of the features of an IDE would be unavailable without spending time trying to make it work. Neovim and other similar editors are also much faster regardless of hardware specifications in many cases. Therefore, the appropriateness of this tool is not entirely non-existent.
+
+The appropriateness of using YAML as well as the yaml-cpp library is noted in Section \ref{starting_processes}. Using other formats or creating a custom parser would have been less suitable and more time consuming.
+
+\section{Relevance to Degree Scheme}
+
+The relevance of this project to my degree scheme (Artificial Intelligence and Robotics) was questioned before the start of the semester. This was primarily due to the lack of robotics involved in the initial specifications of the project. The argument was made that it was more associated with either a software engineering or system management project. Even if the application will be running on robots, the substance of the task did not involve interacting with them them. Due to this decision, it was decided to include additional requirements. These were to create a way to operate the robot from the application as well as display ROS topic information.
+
+\section{Application and Impact}
+\label{application}
+
+As evidenced by the relatively successful hardware testing as well as feedback from the project supervisor/client, the usefulness of the developed software is certainly apparent. The fundamental requirements were satisfied and function correctly and the application itself is easy to use and runs effectively. There were other discussions during meetings regarding optional features that would make the system more like a pseudo desktop environment. Features such as colour-coded tabs and tabs being opened using specified shortcut keys would definitely add to the overall usability of the application. However, these features were strictly classified as optional and were reserved for the end of the project if there was any spare time remaining.
+
+The impact of the completion of this project has the potential to be very beneficial for day-to-day research, providing more flexibility and redundancy for controlling the rovers. There is also the possibility of this software being used for other non-robotics systems if the ROS features were removed and the terminal emulation was more robust. It can be used for demonstrations or possibly a normal terminal multiplexer with built-in executable shortcuts.
+
+\section{Time Management}
+
+At the beginning of a sprint, tasks were chosen in accordance with the assessment of velocity. As a result, it was foreseen how much should be completed within the sprint which provided a measure of how well time was being managed. On a day-to-day basis, due to the ability to carry out work at any location (ie. from home) for most of the project, it was possible to start working first thing in the morning. This provided motivation to complete more work as the day progressed and resulted in more intense focus on the allotted tasks at hand. There were unfortunately long periods where little to work was completed due to illness. However, on days where the usual methods of working were not sufficient, techniques such as the pomodoro technique\cite{pomodoro} were employed to help manage time.
+
+There was no use of a schedule which has advantages and disadvantages. The obvious disadvantage is the inherent disorganisation that comes with a lack of a formal schedule. However, an advantage of this is the ability to have more intense focus on the project as a whole instead of constantly switching between tasks. Also, this approach provides plenty of opportunity to prioritise and re-organise work if this is indeed necessary. These reasons create a time management methodology that maintains focus and ultimately fits into the agile nature of the project.
+
+Due to these methods, time management was adequate enough to finish the main project. However, some steps could have been taken to manage time more effectively with more order and organisation to the day. That being said, what was employed was suitable and necessary for me as an individual as opposed to alternative approaches that may not have provided any benefit to me.
+
+%\section{What Could Have Been Done Differently}
+
+%\begin{itemize}
+%  \item More plan driven
+%  \item Better time management
+%  \item More formal testing procedures
+%  \item More in-depth background reading
+%\end{itemize}
+
+\section{Future Work}
+
+As noted in Section \ref{application}, there is the potential for this system to be a fully complete terminal emulator with its own truly unique features. The elements to be addressed in order to achieve this are noted below:
+
+\subsection{Extra Usability Features}
+
+Section \ref{application} describes optional features that were suggested such as shortcut keys. Providing other way to interact with the application can make it more usable as a replacement for a graphical desktop environment. This is important for both other use cases as well as the intended use on robots if it is used for long periods of time.
+
+\subsection{Signal Handling}
+
+The application currently only displays standard output and standard error. There is no way to accept standard input from a child process as this was not necessary for the original intended purpose. This is the main reason why it is ineffective as a terminal emulator and would take high priority on the list of additions. There are also many other signals to emulate which would have been impossible to implement within the scope of the project.
+
+\subsection{More Customisability}
+
+The key-bindings are currently hard coded and are not configurable. This would be a valuable feature to add in order to accommodate for different user preferences. Also, there should be multiple keys mapped to the same function so that people collaborating can use their own layouts simultaneously without confusion.
+
+Also, due to time constraints, the monitoring tab is hard coded which means that it is potentially useless on other machines without the same messages. An ideal system would allow easy customisation using any potential message type with any number of menu items.
+
+\subsection{Help Menu}
+
+Something that was brought up during testing was the addition of a help menu for new users. This is somewhat related to the lack of key customisation as different users will expect different default settings based on their own experience.
